@@ -4,6 +4,8 @@ A polished, clickable frontend mockup for a fictional higher-education correspon
 
 This repository is intentionally a short-lived demonstration. It contains no backend, authentication, live AI, Microsoft integration, external API, real institution, or real personal data.
 
+Live demo: [https://jyoung122.github.io/email-agent-mock/](https://jyoung122.github.io/email-agent-mock/)
+
 ## Technology
 
 - Vite
@@ -35,6 +37,8 @@ npm run lint
 npm run test:demo
 npm run preview
 ```
+
+Pushes to `main` deploy the production build to GitHub Pages. The Pages build sets the Vite base path to `/email-agent-mock/` and includes a single-page application fallback for direct links.
 
 ## Main demo workflow
 

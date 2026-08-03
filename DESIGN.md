@@ -1,4 +1,4 @@
-# SSI Correspondence Platform — Product Design Specification
+# ORA Correspondence Platform — Product Design Specification
 
 ## Design intent
 
@@ -34,12 +34,12 @@ Use consistent document states:
 
 ## Product identity
 
-- Product name in the shell: **SSI Correspondence**
+- Product name in the shell: **ORA Correspondence**
 - Product descriptor: **Operations Console**
 - Environment label: **Demonstration Environment — Fictional Data**
 - Default role: **Morgan Lee · Program Administrator**
 - Tone: institutional, direct, measured, and reassuring
-- Logo treatment: simple blue square monogram with `SSI`; no imitation Microsoft logo
+- Logo treatment: simple blue square monogram with `ORA`; no imitation Microsoft logo
 
 ## Page frame
 
@@ -48,7 +48,7 @@ Use a four-part application frame:
 ```text
 ┌──────────────────────────────── Demonstration Environment — Fictional Data ──┐
 ├───────────────┬─────────────────────────────────────────────────────────────────┤
-│ SSI           │ Institution selector  Department selector       User / Reset    │
+│ ORA           │ Institution selector  Department selector       User / Reset    │
 │ Correspondence├─────────────────────────────────────────────────────────────────┤
 │               │ Page title, context, and primary action                         │
 │ Navigation    ├─────────────────────────────────────────────────────────────────┤
@@ -181,14 +181,14 @@ Risk is always shown as `Low risk`, `Medium risk`, or `High risk`, not a color d
 
 #### First-visit welcome
 
-Show a one-time welcome modal after the shell first renders. It is the short orientation before route-specific help, not a tutorial tour or a blocker to navigation. Use the title **Welcome to SSI Correspondence** and structure the content as four compact sections:
+Show a one-time welcome modal after the shell first renders. It is the short orientation before route-specific help, not a tutorial tour or a blocker to navigation. Use the title **Welcome to ORA Correspondence** and structure the content as four compact sections:
 
 - **The operational problem:** high-volume institutional correspondence and document intake require consistent service without losing human control, policy traceability, or delivery safeguards.
 - **What this demo shows:** queue triage, evidence-grounded response drafts, attachment/form validation, random QA, controlled simulated outbound email delivery, and policy-impact governance.
 - **Recommended walkthrough:** `Program Dashboard → Work Queue → Transcript Response Workbench → Attachment Review → Delivery Queue → Agent Controls → Knowledge`.
 - **Demonstration boundary:** all records and actions are fictional, predefined, and local to this browser; no email is sent and no live student data, integrations, or AI model are used.
 
-The footer has one primary dismissal action, `Start guided demo`, and a short line directing users to **About this screen** beside Reset Demo for help on any later route. The modal must be keyboard accessible and follow the standard dialog focus treatment. Store dismissal with a dedicated versioned `localStorage` key (`ssi-correspondence-welcome-dismissed-v1`); do not show it again after dismissal, including when Reset Demo restores fictional workflow state.
+The footer has one primary dismissal action, `Start guided demo`, and a short line directing users to **About this screen** beside Reset Demo for help on any later route. The modal must be keyboard accessible and follow the standard dialog focus treatment. Store dismissal with a dedicated versioned `localStorage` key (`ora-correspondence-welcome-dismissed-v1`); do not show it again after dismissal, including when Reset Demo restores fictional workflow state.
 
 #### Route-specific help
 

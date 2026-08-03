@@ -1,4 +1,4 @@
-# SSI Correspondence interactive demo
+# ORA Correspondence interactive demo
 
 A polished, clickable frontend mockup for a fictional higher-education correspondence and document-intake operations console. It demonstrates controlled automation, attachment classification against configured form definitions, canonical extraction, human QA, knowledge governance, and scheduled delivery workflows for leadership conversations.
 

@@ -1,10 +1,10 @@
-# Design Instructions: SSI AI Correspondence Platform Prototype
+# Design Instructions: ORA AI Correspondence Platform Prototype
 
 > **Status: superseded reference.** The implemented mock and current product direction are governed by `prd.md`, `DESIGN.md`, and `AGENTS.md`. In particular, `DESIGN.md` defines the attachment-classification pipeline and the approved lightweight CSS implementation. Do not use the dependency or component-installation instructions in this legacy draft.
 
 ## Objective
 
-Refine the existing Vite, React, and TypeScript prototype into a polished enterprise product mockup suitable for presentation to SSI leadership and participating institutions.
+Refine the existing Vite, React, and TypeScript prototype into a polished enterprise product mockup suitable for presentation to ORA leadership and participating institutions.
 
 The application already represents an AI correspondence and document-intake platform supporting multiple schools, departments, and Microsoft 365 shared or group mailboxes.
 
@@ -907,7 +907,7 @@ The safest recommended action should be visually clear but not automatically sel
 
 ## Reporting Design
 
-Reporting is intended for SSI leadership, grant stakeholders, and operational managers.
+Reporting is intended for ORA leadership, grant stakeholders, and operational managers.
 
 ### Executive report
 

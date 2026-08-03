@@ -89,7 +89,7 @@
   padding: 18px;
 }
 
-.form-review-page--embedded .ssi-page-header {
+.form-review-page--embedded .ora-page-header {
   position: sticky;
   top: -18px;
   z-index: 6;

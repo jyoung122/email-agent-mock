@@ -2,7 +2,7 @@
 
 ## Project mission
 
-Build the polished, clickable SSI AI Correspondence Platform prototype described in `prd.md`. The audience is SSI leadership, so favor a credible, restrained Microsoft 365-adjacent enterprise experience over a generic dashboard or chatbot.
+Build the polished, clickable ORA AI Correspondence Platform prototype described in `prd.md`. The audience is ORA leadership, so favor a credible, restrained Microsoft 365-adjacent enterprise experience over a generic dashboard or chatbot.
 
 ## Guiding principle: the working demo is the product
 
@@ -97,12 +97,12 @@ Apply the guiding principle above when implementing this sequence. Favor a compl
 
 - Follow `DESIGN.md`; do not invent a separate visual language route by route.
 - Build an operations control plane, not a chatbot or marketing dashboard.
-- Use the shell name `SSI Correspondence` with descriptor `Operations Console` and the persistent fictional-data environment label.
+- Use the shell name `ORA Correspondence` with descriptor `Operations Console` and the persistent fictional-data environment label.
 - Use the specified system-font typography, semantic color tokens, spacing, borders, radii, table density, badge mappings, and responsive breakpoints.
 - Use the shell dimensions and compositions in `DESIGN.md` as target values. Small adjustments are acceptable when verified at real viewport sizes, but preserve the intended hierarchy.
 - Keep one primary action per region and use precise operational labels such as `Approve for delivery`, `Run random QA`, and `Hold affected drafts`.
 - Use dialogs, drawers, toasts, and inline alerts for the purposes assigned in `DESIGN.md`. Do not use browser-native `alert`, `confirm`, or `prompt` in the finished prototype.
-- Implement the first-visit welcome modal specified in `prd.md` and `DESIGN.md`. It explains the business problem, simulated capabilities, recommended walkthrough, and fictional/local-data boundary, then points to `About this screen` for later help. Persist only its dismissal under the dedicated versioned key `ssi-correspondence-welcome-dismissed-v1`; this UI preference is separate from demo workflow state and must not be reset by Reset Demo.
+- Implement the first-visit welcome modal specified in `prd.md` and `DESIGN.md`. It explains the business problem, simulated capabilities, recommended walkthrough, and fictional/local-data boundary, then points to `About this screen` for later help. Persist only its dismissal under the dedicated versioned key `ora-correspondence-welcome-dismissed-v1`; this UI preference is separate from demo workflow state and must not be reset by Reset Demo.
 - Keep the persistent `About this screen` button immediately beside `Reset Demo` in the application header. It opens an accessible, route-specific informational modal with the four labeled sections `What exists`, `Business case`, `Pain solved`, and `Possible additions`; it must never alter demo state. Use the route-specific content map in `DESIGN.md`, including the attachment-review explanation of configured-form ground truth.
 - Provide the `Start guided demo` spotlight tour specified in `prd.md` and `DESIGN.md`. It must be restartable, keyboard accessible, and strictly non-mutating: navigation and highlighting are allowed, but it may not auto-approve, refine, classify, send, change policies, or otherwise alter demo state. Include progress, `Back`/`Next`/`Exit`, the specified core-route sequence, business-value copy, focus management, and a visible `Continue` fallback whenever a target is unavailable.
 - Implement the Improvement Queue as a governed QA learning-loop simulation: aggregate structured QA approvals/edits/rejections and classification/extraction corrections; run only deterministic offline simulated evaluation; require human approval for versioned activation; show monitoring and rollback. Never silently self-train or auto-deploy from one review, pattern, or candidate.

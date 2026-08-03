@@ -1,10 +1,10 @@
-# Build Instructions: SSI AI Correspondence Platform Interactive Mockup
+# Build Instructions: ORA AI Correspondence Platform Interactive Mockup
 
 ## Objective
 
 Build a polished, clickable frontend prototype for an AI correspondence and document-intake platform designed for colleges and universities.
 
-The prototype will be used in early discussions with SSI leadership. It must demonstrate the product experience and operating model without using real institutional data, live Microsoft integrations, a backend, or an AI model.
+The prototype will be used in early discussions with ORA leadership. It must demonstrate the product experience and operating model without using real institutional data, live Microsoft integrations, a backend, or an AI model.
 
 The application should feel like a credible enterprise Microsoft 365-adjacent product rather than a generic AI chatbot.
 
@@ -676,7 +676,7 @@ On the first visit only, show an accessible welcome modal after the application 
 
 Keep the modal concise and include a recommended walkthrough: **Program Dashboard → Work Queue → Transcript Response Workbench → Attachment Review → Delivery Queue → Agent Controls → Knowledge**. State clearly that every record, outcome, and action is fictional and simulated locally; no live email, student data, integrations, or AI service is used. Close with a pointer to the persistent **About this screen** control for route-specific help later in the walkthrough.
 
-The user may dismiss the modal. Persist that dismissal in `localStorage` under a versioned, dedicated key such as `ssi-correspondence-welcome-dismissed-v1`, so it does not reappear on later visits. The welcome dismissal is presentation preference, not demo business state; Reset Demo should not silently re-show the modal.
+The user may dismiss the modal. Persist that dismissal in `localStorage` under a versioned, dedicated key such as `ora-correspondence-welcome-dismissed-v1`, so it does not reappear on later visits. The welcome dismissal is presentation preference, not demo business state; Reset Demo should not silently re-show the modal.
 
 ## Route-specific onboarding
 

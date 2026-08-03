@@ -45,7 +45,7 @@ export default function DashboardPage() {
         <div>
           <p className="eyebrow">Operational overview</p>
           <h1>Program dashboard</h1>
-          <p>Correspondence performance across the fictional SSI network · Jul 6 – Aug 2, 2026</p>
+          <p>Correspondence performance across the fictional ORA network · Jul 6 – Aug 2, 2026</p>
         </div>
         <div className="leadership-heading-actions">
           <div className="segmented" aria-label="Dashboard scope">

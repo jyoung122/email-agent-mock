@@ -147,8 +147,8 @@ export const improvementProposals: ImprovementProposal[] = [
   { id: 'proposal-document-routing', target: 'Document classification routing', scope: 'Financial Aid attachments', signal: 'Low-confidence image classifications', evidenceCount: 7, status: 'Dismissed', currentVersion: 'agent-v1.3', candidateVersion: 'agent-v1.4-routing', currentMetric: '88% correct route', projectedMetric: '90% correct route', evaluationSummary: 'Dismissed: sample was too small to justify a governed activation.' },
 ]
 export const auditEvents: AuditEvent[] = [
-  { id: 'audit-001', timestamp: 'Aug 2, 2026 · 9:13 AM ET', actor: 'SSI classification simulation', action: 'Classified request', detail: 'Transcript request classified at 97% confidence.', emailId: PRIMARY_TRANSCRIPT_EMAIL_ID, draftId: PRIMARY_TRANSCRIPT_DRAFT_ID },
-  { id: 'audit-002', timestamp: 'Aug 2, 2026 · 9:14 AM ET', actor: 'SSI extraction simulation', action: 'Extracted authorization form', detail: 'Missing signature detected with 99% confidence.', emailId: PRIMARY_TRANSCRIPT_EMAIL_ID, formId: PRIMARY_TRANSCRIPT_FORM_ID },
+  { id: 'audit-001', timestamp: 'Aug 2, 2026 · 9:13 AM ET', actor: 'ORA classification simulation', action: 'Classified request', detail: 'Transcript request classified at 97% confidence.', emailId: PRIMARY_TRANSCRIPT_EMAIL_ID, draftId: PRIMARY_TRANSCRIPT_DRAFT_ID },
+  { id: 'audit-002', timestamp: 'Aug 2, 2026 · 9:14 AM ET', actor: 'ORA extraction simulation', action: 'Extracted authorization form', detail: 'Missing signature detected with 99% confidence.', emailId: PRIMARY_TRANSCRIPT_EMAIL_ID, formId: PRIMARY_TRANSCRIPT_FORM_ID },
   { id: 'audit-003', timestamp: 'Aug 2, 2026 · 9:16 AM ET', actor: 'QA sampling simulation', action: 'Selected for random QA', detail: 'Selected after batch population was locked; agent did not choose the sample.', emailId: PRIMARY_TRANSCRIPT_EMAIL_ID, draftId: PRIMARY_TRANSCRIPT_DRAFT_ID, batchId: PRIMARY_RELEASE_BATCH_ID },
 ]
 

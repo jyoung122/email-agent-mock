@@ -1,13 +1,13 @@
 import { expect, test, type Page } from '@playwright/test'
 
 const dismissWelcome = async (page: Page) => {
-  const welcome = page.getByRole('dialog', { name: 'Welcome to SSI Correspondence' })
+  const welcome = page.getByRole('dialog', { name: 'Welcome to ORA Correspondence' })
   if (await welcome.isVisible()) await welcome.getByRole('button', { name: 'Explore current screen' }).click()
 }
 
 test('guided demo explains the cross-screen workflow and can restart', async ({ page }) => {
   await page.goto('/')
-  const welcome = page.getByRole('dialog', { name: 'Welcome to SSI Correspondence' })
+  const welcome = page.getByRole('dialog', { name: 'Welcome to ORA Correspondence' })
   await welcome.getByRole('button', { name: 'Start guided demo' }).click()
 
   const tour = page.locator('.guided-tour__card')
@@ -74,13 +74,13 @@ test('all primary routes render without browser errors', async ({ page }) => {
   for (const [index, [route, heading, guideName]] of routes.entries()) {
     await page.goto(route)
     if (index === 0) {
-      const welcome = page.getByRole('dialog', { name: 'Welcome to SSI Correspondence' })
+      const welcome = page.getByRole('dialog', { name: 'Welcome to ORA Correspondence' })
       await expect(welcome.getByRole('heading', { name: 'The business problem' })).toBeVisible()
       await expect(welcome).toContainText('Everything is fictional and browser-local')
       await expect(welcome).toContainText('About this screen')
       await welcome.getByRole('button', { name: 'Explore current screen' }).click()
     }
-    await expect(page.getByRole('dialog', { name: 'Welcome to SSI Correspondence' })).toBeHidden()
+    await expect(page.getByRole('dialog', { name: 'Welcome to ORA Correspondence' })).toBeHidden()
     await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible()
     await expect(page.getByText('Demonstration Environment — Fictional Data')).toBeVisible()
     await page.getByRole('button', { name: 'About this screen' }).click()

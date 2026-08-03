@@ -176,7 +176,20 @@ Risk is always shown as `Low risk`, `Medium risk`, or `High risk`, not a color d
 - Confirmation dialog: required for releasing a batch, pausing all releases, emergency hold, reset, and continuing after a known policy conflict.
 - Avoid browser-native `alert`, `confirm`, and `prompt` in the finished prototype.
 
-### Route-specific onboarding
+### First-visit welcome and route-specific onboarding
+
+#### First-visit welcome
+
+Show a one-time welcome modal after the shell first renders. It is the short orientation before route-specific help, not a tutorial tour or a blocker to navigation. Use the title **Welcome to SSI Correspondence** and structure the content as four compact sections:
+
+- **The operational problem:** high-volume institutional correspondence and document intake require consistent service without losing human control, policy traceability, or release safeguards.
+- **What this demo shows:** queue triage, evidence-grounded response drafts, attachment/form validation, random QA, controlled release, and policy-impact governance.
+- **Recommended walkthrough:** `Program Dashboard → Work Queue → Transcript Response Workbench → Attachment Review → Release Queue → Agent Controls → Knowledge`.
+- **Demonstration boundary:** all records and actions are fictional, predefined, and local to this browser; no email is sent and no live student data, integrations, or AI model are used.
+
+The footer has one primary dismissal action, `Start guided demo`, and a short line directing users to **About this screen** beside Reset Demo for help on any later route. The modal must be keyboard accessible and follow the standard dialog focus treatment. Store dismissal with a dedicated versioned `localStorage` key (`ssi-correspondence-welcome-dismissed-v1`); do not show it again after dismissal, including when Reset Demo restores fictional workflow state.
+
+#### Route-specific help
 
 `About this screen` is a persistent secondary header button on every primary route, immediately before `Reset Demo`. It opens an accessible modal for the current route; it is explanatory only and never changes demo state. Each modal uses these four labeled sections: **What exists**, **Business case**, **Pain solved**, and **Possible additions**. Copy is concise and route-specific:
 

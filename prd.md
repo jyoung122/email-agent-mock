@@ -653,6 +653,14 @@ The following controls must work:
 
 Add a Reset Demo button that restores the original JSON-derived state.
 
+## First-visit welcome
+
+On the first visit only, show an accessible welcome modal after the application shell loads. It must introduce the business problem—high-volume institutional correspondence and document intake need safe, traceable automation with human oversight—and explain that this demonstration shows triage, evidence-grounded drafting, form validation, QA, controlled release, and policy governance.
+
+Keep the modal concise and include a recommended walkthrough: **Program Dashboard → Work Queue → Transcript Response Workbench → Attachment Review → Release Queue → Agent Controls → Knowledge**. State clearly that every record, outcome, and action is fictional and simulated locally; no live email, student data, integrations, or AI service is used. Close with a pointer to the persistent **About this screen** control for route-specific help later in the walkthrough.
+
+The user may dismiss the modal. Persist that dismissal in `localStorage` under a versioned, dedicated key such as `ssi-correspondence-welcome-dismissed-v1`, so it does not reappear on later visits. The welcome dismissal is presentation preference, not demo business state; Reset Demo should not silently re-show the modal.
+
 ## Route-specific onboarding
 
 Place a persistent `About this screen` button in the application header immediately beside `Reset Demo`. On every primary screen, it opens a route-specific, keyboard-accessible onboarding modal. The modal is informational only: it must not change local demo state and must include four labeled sections: **What exists**, **Business case**, **Pain solved**, and **Possible additions**.

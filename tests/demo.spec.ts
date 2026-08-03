@@ -1,4 +1,9 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
+
+const dismissWelcome = async (page: Page) => {
+  const welcome = page.getByRole('dialog', { name: 'Welcome to SSI Correspondence' })
+  if (await welcome.isVisible()) await welcome.getByRole('button', { name: 'Explore current screen' }).click()
+}
 
 test('all primary routes render without browser errors', async ({ page }) => {
   const browserErrors: string[] = []
@@ -13,8 +18,16 @@ test('all primary routes render without browser errors', async ({ page }) => {
     ['/reporting', 'Program reporting', 'Reporting'],
     ['/administration', 'Administration', 'Administration'],
   ]
-  for (const [route, heading, guideName] of routes) {
+  for (const [index, [route, heading, guideName]] of routes.entries()) {
     await page.goto(route)
+    if (index === 0) {
+      const welcome = page.getByRole('dialog', { name: 'Welcome to SSI Correspondence' })
+      await expect(welcome.getByRole('heading', { name: 'The business problem' })).toBeVisible()
+      await expect(welcome).toContainText('Everything is fictional and browser-local')
+      await expect(welcome).toContainText('About this screen')
+      await welcome.getByRole('button', { name: 'Explore current screen' }).click()
+    }
+    await expect(page.getByRole('dialog', { name: 'Welcome to SSI Correspondence' })).toBeHidden()
     await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible()
     await expect(page.getByText('Demonstration Environment — Fictional Data')).toBeVisible()
     await page.getByRole('button', { name: 'About this screen' }).click()
@@ -30,6 +43,7 @@ test('all primary routes render without browser errors', async ({ page }) => {
 
 test('leadership transcript workflow completes and resets', async ({ page }) => {
   await page.goto('/work-queue')
+  await dismissWelcome(page)
   await page.getByRole('row', { name: 'Open Transcript request for graduate application from Alex Harper' }).click()
   await expect(page.getByText('Selected for review through random QA sampling')).toBeVisible()
   await expect(page.getByText('Authorization form is missing a signature')).toBeVisible()
@@ -85,6 +99,7 @@ test('leadership transcript workflow completes and resets', async ({ page }) => 
 
 test('queue filtering and simulated batch release work', async ({ page }) => {
   await page.goto('/work-queue')
+  await dismissWelcome(page)
   await page.getByPlaceholder('Search sender, subject, mailbox…').fill('Quinn Brooks')
   await expect(page.getByText('Showing 1 of 22 messages')).toBeVisible()
   await expect(page.getByRole('row', { name: /Quinn Brooks/ })).toBeVisible()
@@ -103,6 +118,7 @@ test('queue filtering and simulated batch release work', async ({ page }) => {
 
 test('configured form catalog drives attachment remapping', async ({ page }) => {
   await page.goto('/work-queue/email-transcript-001')
+  await dismissWelcome(page)
   await page.getByRole('button', { name: /graduate_application_portal_capture\.png/ }).click()
   await expect(page.getByRole('dialog', { name: 'Attachment review' })).toBeVisible()
   await page.getByLabel('Configured form definition').selectOption('form-definition-transcript-auth')

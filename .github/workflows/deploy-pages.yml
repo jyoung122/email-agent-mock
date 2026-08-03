@@ -35,9 +35,6 @@ jobs:
         env:
           VITE_BASE_PATH: /email-agent-mock/
 
-      - name: Add single-page application fallback
-        run: cp dist/index.html dist/404.html
-
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 

@@ -38,7 +38,7 @@ npm run test:demo
 npm run preview
 ```
 
-Pushes to `main` deploy the production build to GitHub Pages. The Pages build sets the Vite base path to `/email-agent-mock/` and includes a single-page application fallback for direct links.
+Pushes to `main` deploy the production build to GitHub Pages. The Pages build sets the Vite base path to `/email-agent-mock/` and uses hash routing so shared views load reliably from the project-site URL.
 
 ## Main demo workflow
 

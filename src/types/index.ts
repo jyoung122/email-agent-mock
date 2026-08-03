@@ -11,6 +11,9 @@ export type ExtractionStatus = 'Not started' | 'Extracted' | 'Review required' |
 export type ValidationStatus = 'Not run' | 'Valid' | 'Warnings' | 'Invalid'
 export type ReleaseStatus = 'Scheduled' | 'Held' | 'Paused' | 'Released'
 export type AgentMode = 'Normal' | 'Increased QA' | 'Full Review' | 'Paused' | 'Knowledge Change' | 'Emergency Hold'
+export type QaFeedbackCategory = 'Response' | 'Classification' | 'Extraction' | 'Knowledge'
+export type QaFeedbackDecision = 'Approved unchanged' | 'Approved with edits' | 'Rejected' | 'Corrected' | 'Observed'
+export type ImprovementProposalStatus = 'Candidate' | 'Evaluated' | 'Active' | 'Dismissed' | 'Rolled back'
 
 export interface Institution { id: Id; name: string; shortName: string; region: string; active: boolean }
 export interface Department { id: Id; name: string; institutionId: Id; leadUserId: Id }
@@ -32,6 +35,8 @@ export interface ExtractionRun { id: Id; attachmentId: Id; emailId: Id; formDefi
 export interface ExtractedForm { id: Id; emailId: Id; attachmentId?: Id; extractionRunId?: Id; formDefinitionId?: Id; formVersionId?: Id; name: string; studentDisplayName: string; studentId: string; formVersion: string; confidence: number; reviewStatus: FormReviewStatus; fields: ExtractedField[]; selectedFieldId?: Id }
 export interface ReleaseBatch { id: Id; name: string; institutionId: Id; departmentId: Id; mailboxId: Id; scheduledReleaseAt: string; qaPercentage: number; populationDraftIds: Id[]; mandatoryDraftIds: Id[]; randomSelectedDraftIds: Id[]; approvedDraftIds: Id[]; heldDraftIds: Id[]; releasedDraftIds: Id[]; status: ReleaseStatus; locked: boolean }
 export interface QaPolicy { id: Id; institutionId: Id; departmentId: Id; mailboxId: Id; requestType: string; headlessAutomationPercentage: number; randomQaPercentage: number; mandatoryHumanReviewPercentage: number; minimumGroundingConfidence: number; minimumExtractionConfidence: number; scheduledReleaseTime: string; releaseFrequency: string; businessHoursOnly: boolean; releasesPaused: boolean; mode: AgentMode; toneProfile: string; knowledgeChangeHold: boolean }
-export interface AuditEvent { id: Id; timestamp: string; actor: string; action: string; detail: string; emailId?: Id; draftId?: Id; formId?: Id; attachmentId?: Id; batchId?: Id; knowledgeId?: Id }
+export interface QaFeedbackEvent { id: Id; category: QaFeedbackCategory; decision: QaFeedbackDecision; summary: string; source: string; timestamp: string; emailId?: Id; formId?: Id; attachmentId?: Id; proposalId?: Id }
+export interface ImprovementProposal { id: Id; target: string; scope: string; signal: string; evidenceCount: number; status: ImprovementProposalStatus; currentVersion: string; candidateVersion: string; currentMetric: string; projectedMetric: string; evaluationSummary: string }
+export interface AuditEvent { id: Id; timestamp: string; actor: string; action: string; detail: string; emailId?: Id; draftId?: Id; formId?: Id; attachmentId?: Id; batchId?: Id; knowledgeId?: Id; proposalId?: Id }
 export interface DemoSelections { institutionId: Id; departmentId: Id; userId: Id; selectedAttachmentId?: Id }
-export interface DemoState { institutions: Institution[]; departments: Department[]; mailboxes: Mailbox[]; users: User[]; attachments: Attachment[]; emails: EmailMessage[]; knowledge: KnowledgeSource[]; formDefinitions: FormDefinition[]; documentAssessments: DocumentAssessment[]; extractionRuns: ExtractionRun[]; forms: ExtractedForm[]; releaseBatches: ReleaseBatch[]; policies: QaPolicy[]; auditEvents: AuditEvent[]; selections: DemoSelections }
+export interface DemoState { institutions: Institution[]; departments: Department[]; mailboxes: Mailbox[]; users: User[]; attachments: Attachment[]; emails: EmailMessage[]; knowledge: KnowledgeSource[]; formDefinitions: FormDefinition[]; documentAssessments: DocumentAssessment[]; extractionRuns: ExtractionRun[]; forms: ExtractedForm[]; releaseBatches: ReleaseBatch[]; policies: QaPolicy[]; qaFeedback: QaFeedbackEvent[]; improvementProposals: ImprovementProposal[]; activeAgentVersion: string; auditEvents: AuditEvent[]; selections: DemoSelections }

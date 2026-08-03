@@ -80,8 +80,9 @@ Use these labels and Lucide icons:
 | `/knowledge` | Knowledge | `BookOpen` |
 | `/reporting` | Reporting | `ChartNoAxesCombined` |
 | `/administration` | Administration | `Settings` |
+| `/improvement-queue` | Improvement Queue | `BrainCircuit` |
 
-The active item uses a 3px blue left indicator, pale-blue fill, blue icon, and semibold label. Group the first three routes under **Operations** and the remaining four under **Governance**. Section labels are small uppercase text, not interactive controls. Form Review is not a navigation item: it opens as an attachment-review modal from a Work Queue request or the Response Workbench.
+The active item uses a 3px blue left indicator, pale-blue fill, blue icon, and semibold label. Group the first three routes under **Operations** and the remaining five under **Governance**. Section labels are small uppercase text, not interactive controls. Form Review is not a navigation item: it opens as an attachment-review modal from a Work Queue request or the Response Workbench.
 
 Show compact navigation counters only when meaningful:
 
@@ -203,12 +204,13 @@ The footer has one primary dismissal action, `Start guided demo`, and a short li
 | Knowledge | Approved policy catalog, ownership, versions, and impact handling; protects response consistency. | Makes stale policy use visible; add authoring, diffs, and review-cycle reminders. |
 | Reporting | Leadership measures, performance comparisons, and knowledge gaps; demonstrates measurable value. | Reduces manual impact reporting; add scheduled exports and richer period comparisons. |
 | Administration | Fictional configuration tables, including the configured form taxonomy; shows controlled setup without code. | Replaces scattered configuration; add provisioning, role management, and import workflows. |
+| Improvement Queue | Aggregated QA and document-intake feedback, candidate versions, offline evaluation, and human activation; demonstrates governed learning. | Avoids opaque self-training from individual reviews; add approval workflows, larger evaluation sets, and richer monitoring. |
 
 The attachment-review modal also offers its own concise `About this review` explanation when launched: it identifies the incoming artifact, matches it against configured form definitions/versions, validates canonical fields, and keeps unmatched artifacts as supporting material. It demonstrates safer document intake; possible additions include visual mapping and assisted exception handling.
 
 ### Guided demo tour
 
-Expose a persistent `Start guided demo` entry point for the leadership narrative. It launches a restartable spotlight tour that does not change any local demo state or invoke operational controls. The exact sequence is: Program Dashboard → Work Queue → Registrar transcript Response Workbench → transcript attachment intake → Delivery Queue → Knowledge → Agent Controls.
+Expose a persistent `Start guided demo` entry point for the leadership narrative. It launches a restartable spotlight tour that does not change any local demo state or invoke operational controls. The exact sequence is: Program Dashboard → Work Queue → Registrar transcript Response Workbench → transcript attachment intake → Delivery Queue → Knowledge → Agent Controls → Improvement Queue.
 
 At every step, navigate to the needed route or attachment-review context, place a visible spotlight around the relevant target, and use concise business-value copy. The tour panel shows `Step n of n` plus `Back`, `Next`, and `Exit`; starting it again always restarts at Dashboard. All tour controls and route changes are keyboard operable, focus enters the current tour panel, and focus returns to the invoking control on exit. If the expected target is missing or cannot be positioned, show a visible fallback explaining that the screen is still available and offer `Continue`; never auto-run a state-changing action to make a target appear.
 
@@ -336,6 +338,14 @@ Specific details:
 - `Form types` is the configured classification catalog. Show definition name, category, versions, accepted formats, required canonical fields, classification threshold, and status.
 - `Canonical fields` shows normalized keys, data type, validation rule, and which configured forms use each field.
 
+### Improvement Queue
+
+- Present a governed QA learning loop, never an autonomous self-training system. Surface structured feedback from QA approvals, edits, and rejections plus attachment-classification and extraction corrections.
+- Aggregate feedback patterns into compact cards or a table with volume, representative simulated examples, affected workflow, and candidate improvement hypothesis.
+- `Run simulated evaluation` reveals deterministic, predefined offline quality, safety, and policy-grounding results; it must not call a service or mutate a candidate version.
+- A candidate can be `Approved and activated` only after evaluation and a human confirmation. Activation is versioned, simulated local state; it never follows from a single review.
+- Show an active-version monitoring strip and a visible simulated `Rollback` action. `Dismiss` removes a candidate from the operator's active review list with confirmation feedback.
+
 ## Interaction narrative for the leadership demo
 
 The happy-path presentation should take about five minutes:
@@ -349,6 +359,7 @@ The happy-path presentation should take about five minutes:
 7. Open Knowledge, mark the transcript policy changed, and select `Increase QA to 100%` plus hold affected drafts.
 8. Return to Agent Controls or Delivery Queue to show the policy and held-state propagation.
 9. Use Reset Demo to restore the original narrative.
+10. Finish in Improvement Queue to show that accumulated QA and document-intake feedback is evaluated offline and activated only with human approval.
 
 Preserve the user's place: closing Attachment Review returns to its originating Work Queue request or Response Workbench with the selected attachment context intact, and returning from a record retains queue filters.
 

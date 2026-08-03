@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { BookOpen, ChartNoAxesCombined, ChevronDown, CircleHelp, Inbox, LayoutDashboard, Lightbulb, RotateCcw, Send, Settings, ShieldCheck, SlidersHorizontal, Sparkles } from 'lucide-react'
+import { BookOpen, BrainCircuit, ChartNoAxesCombined, ChevronDown, CircleHelp, Inbox, LayoutDashboard, Lightbulb, RotateCcw, Send, Settings, ShieldCheck, SlidersHorizontal, Sparkles } from 'lucide-react'
 import { Button, Modal } from '../shared'
 import GuidedTour from './GuidedTour'
 import { guideForPath } from './screenGuides'
@@ -16,7 +16,7 @@ type NavigationGroup = { label: string; items: NavigationItem[] }
 
 const navGroups: NavigationGroup[] = [
   { label: 'Operations', items: [{ to: '/', label: 'Program Dashboard', icon: LayoutDashboard }, { to: '/work-queue', label: 'Work Queue', icon: Inbox, count: 'workQueue' }, { to: '/release-queue', label: 'Delivery Queue', icon: Send, count: 'releaseQueue' }] },
-  { label: 'Governance', items: [{ to: '/agent-controls', label: 'Agent Controls', icon: SlidersHorizontal }, { to: '/knowledge', label: 'Knowledge', icon: BookOpen }, { to: '/reporting', label: 'Reporting', icon: ChartNoAxesCombined }, { to: '/administration', label: 'Administration', icon: Settings }] },
+  { label: 'Governance', items: [{ to: '/agent-controls', label: 'Agent Controls', icon: SlidersHorizontal }, { to: '/knowledge', label: 'Knowledge', icon: BookOpen }, { to: '/improvement-queue', label: 'Improvement Queue', icon: BrainCircuit }, { to: '/reporting', label: 'Reporting', icon: ChartNoAxesCombined }, { to: '/administration', label: 'Administration', icon: Settings }] },
 ]
 
 const welcomeStorageKey = 'ssi-correspondence-welcome-dismissed-v1'

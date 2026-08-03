@@ -125,6 +125,7 @@ Create a persistent left navigation containing:
 * Knowledge
 * Reporting
 * Administration
+* Improvement Queue
 
 Form Review is not a standalone primary navigation destination. It is an attachment-review modal launched from a Work Queue request or the Response Workbench attachment list, preserving the originating request context and selected attachment.
 
@@ -528,6 +529,22 @@ These screens only need to appear functional. Use modal forms and local state up
 
 The Form Types section represents the configured classification catalog, not previously extracted form instances. Show form definitions, supported versions/file types, classification thresholds, required canonical fields, and status.
 
+### 10. Improvement Queue
+
+Create a governed QA learning-loop screen at `/improvement-queue`. This screen is a frontend-only, deterministic simulation of how reviewed correspondence and document-intake feedback can inform a candidate improvement; it is not live training, automatic model learning, or autonomous deployment.
+
+Show structured feedback collected from QA approvals, reviewer edits, rejections, attachment-classification corrections, and extraction-field corrections. Aggregate the fixtures into visible recurring patterns with counts, examples, affected workflows, and a proposed improvement hypothesis.
+
+Required actions:
+
+* Run simulated evaluation against a predefined offline holdout result.
+* Review deterministic quality, safety, and policy-grounding results.
+* Approve and activate a version only after the evaluation is visible and a human explicitly confirms.
+* Dismiss a candidate improvement with visible local feedback.
+* Show active-version monitoring and a rollback control after activation.
+
+Never silently self-train, update a model, or auto-deploy from one review or one aggregate pattern. Activation is a simulated, human-approved, versioned change; monitoring and rollback are simulated local state only.
+
 ## Static Data
 
 Store mock data in JSON or typed TypeScript files.
@@ -665,7 +682,7 @@ The user may dismiss the modal. Persist that dismissal in `localStorage` under a
 
 Place a persistent `About this screen` button in the application header immediately beside `Reset Demo`. On every primary screen, it opens a route-specific, keyboard-accessible onboarding modal. The modal is informational only: it must not change local demo state and must include four labeled sections: **What exists**, **Business case**, **Pain solved**, and **Possible additions**.
 
-Provide concise route-specific content for Program Dashboard (network health and leadership oversight), Work Queue (filterable correspondence triage), Response Workbench (reviewable draft and evidence), Delivery Queue (locked-batch delivery governance), Agent Controls (scoped automation and QA policy), Knowledge (policy governance and impact), Reporting (measurable program value), and Administration (controlled configuration, including the form-definition catalog). Each modal must explain the relevant operational pain it addresses and one or more plausible future additions without implying a live integration.
+Provide concise route-specific content for Program Dashboard (network health and leadership oversight), Work Queue (filterable correspondence triage), Response Workbench (reviewable draft and evidence), Delivery Queue (locked-batch delivery governance), Agent Controls (scoped automation and QA policy), Knowledge (policy governance and impact), Reporting (measurable program value), Administration (controlled configuration, including the form-definition catalog), and Improvement Queue (governed QA learning loop). Each modal must explain the relevant operational pain it addresses and one or more plausible future additions without implying a live integration.
 
 The attachment-review modal should likewise explain the document-intake path: incoming artifact → configured form/version classification → canonical extraction → validation. It must state that configured form definitions are the ground truth, that unmatched artifacts may remain supporting material, and may cite visual mapping or exception handling as future additions.
 
@@ -673,7 +690,7 @@ The attachment-review modal should likewise explain the document-intake path: in
 
 Provide a persistent `Start guided demo` entry point that launches a restartable, keyboard-accessible spotlight tour. The tour is a presentation aid only: it must never auto-mutate fixture-derived demo state, approve a draft, alter a policy, or otherwise trigger a workflow action.
 
-The guided sequence moves through Dashboard, Work Queue, the Registrar transcript Response Workbench, attachment intake, Delivery Queue, Knowledge, and Agent Controls. Each step navigates to its required route or attachment-review context, highlights the relevant visible target, and explains the business value of that screen in concise leadership-facing copy.
+The guided sequence moves through Dashboard, Work Queue, the Registrar transcript Response Workbench, attachment intake, Delivery Queue, Knowledge, Agent Controls, and finishes at Improvement Queue. Each step navigates to its required route or attachment-review context, highlights the relevant visible target, and explains the business value of that screen in concise leadership-facing copy.
 
 Show step progress and provide `Back`, `Next`, and `Exit` controls. `Start guided demo` must restart the sequence from the first step at any time. Tour controls, focus movement, and route changes must be keyboard operable. If a target is unavailable because of a viewport, route, reset, or rendering condition, show a clear fallback message with a `Continue` action rather than blocking the tour or failing silently.
 
@@ -792,8 +809,9 @@ The prototype is complete when:
 10. Knowledge changes can place staged drafts on hold.
 11. Approved drafts can move through the Delivery Queue.
 12. Demo state can be reset.
-13. No live APIs, backend, authentication, or AI services are used.
-14. The interface is polished enough to share with executive stakeholders.
+13. Improvement Queue aggregates structured QA and document-intake feedback, runs only deterministic simulated offline evaluation, and requires human approval before versioned activation or simulated rollback.
+14. No live APIs, backend, authentication, or AI services are used.
+15. The interface is polished enough to share with executive stakeholders.
 
 ## Delivery Instructions
 

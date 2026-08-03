@@ -63,6 +63,15 @@ const guides: Record<string, ScreenGuide> = {
     additions: ['Source-document ingestion and change detection', 'Article-level usage and outcome analytics', 'Approval workflows with comments and legal review'],
     firstAction: 'Open the transcript policy article and demonstrate how a change affects staged work.',
   },
+  improvementQueue: {
+    screen: 'Improvement Queue',
+    purpose: 'A governed feedback loop for turning reviewer decisions and operational patterns into candidate improvements without silent self-training.',
+    exists: ['QA feedback and reviewer corrections collected as traceable improvement signals', 'Pattern aggregation that groups recurring misses, edits, and knowledge gaps', 'Simulated evaluation results before a candidate change can move forward', 'Human-approved version activation and post-activation monitoring'],
+    businessCase: 'Teams can improve correspondence quality over time while retaining institutional oversight of what changes, why it changes, and when it becomes active.',
+    painSolved: 'Avoids scattered reviewer feedback, repeated operational mistakes, and uncontrolled model or policy changes that cannot be explained to stakeholders.',
+    additions: ['Evaluation cohorts segmented by institution and request type', 'Approval workflows with reviewer rationale and version comparison', 'Production monitoring for drift, rollback, and quality thresholds'],
+    firstAction: 'Review the highest-impact pattern, inspect its simulated evaluation, then trace the required human approval before activation.',
+  },
   reporting: {
     screen: 'Reporting',
     purpose: 'An outcome and performance view for evaluating operational value across the fictional network.',
@@ -89,6 +98,7 @@ export function guideForPath(pathname: string): ScreenGuide {
   if (pathname.startsWith('/release-queue')) return guides.releaseQueue
   if (pathname.startsWith('/agent-controls')) return guides.controls
   if (pathname.startsWith('/knowledge')) return guides.knowledge
+  if (pathname.startsWith('/improvement-queue')) return guides.improvementQueue
   if (pathname.startsWith('/reporting')) return guides.reporting
   if (pathname.startsWith('/administration')) return guides.administration
   return guides.dashboard

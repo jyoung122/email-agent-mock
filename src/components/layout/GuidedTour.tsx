@@ -72,6 +72,14 @@ const guidedTourSteps: TourStep[] = [
     description: 'Operating mode, automation thresholds, QA rates, confidence gates, and delivery safeguards are explicit and scoped.',
     businessValue: 'Administrators can increase oversight when risk changes without redesigning the workflow or losing the audit trail.',
   },
+  {
+    path: '/improvement-queue',
+    selector: '[data-tour="improvement-loop"]',
+    eyebrow: 'Governed improvement',
+    title: 'Turn QA feedback into accountable improvements',
+    description: 'Aggregate recurring reviewer feedback, evaluate a proposed change, and activate a new version only after human approval.',
+    businessValue: 'The service can improve over time without silent self-training, while owners retain a clear decision trail and monitoring boundary.',
+  },
 ]
 
 type GuidedTourProps = {

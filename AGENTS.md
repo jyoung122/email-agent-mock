@@ -86,7 +86,7 @@ Implement in this order when the repository is incomplete:
 2. Static mock-data model and shared demo-state layer.
 3. The end-to-end Registrar transcript workflow across Work Queue, Response Workbench, the attachment-review modal, Delivery Queue, Agent Controls, and Knowledge.
 4. Remaining required interactions on those screens.
-5. Program Dashboard, Reporting, and Administration depth.
+5. Program Dashboard, Reporting, Administration, and Improvement Queue depth.
 6. Accessibility, responsive refinement, consistency checks, and final polish.
 
 A wide set of decorative screens is not a substitute for the required clickable workflow.
@@ -105,6 +105,7 @@ Apply the guiding principle above when implementing this sequence. Favor a compl
 - Implement the first-visit welcome modal specified in `prd.md` and `DESIGN.md`. It explains the business problem, simulated capabilities, recommended walkthrough, and fictional/local-data boundary, then points to `About this screen` for later help. Persist only its dismissal under the dedicated versioned key `ssi-correspondence-welcome-dismissed-v1`; this UI preference is separate from demo workflow state and must not be reset by Reset Demo.
 - Keep the persistent `About this screen` button immediately beside `Reset Demo` in the application header. It opens an accessible, route-specific informational modal with the four labeled sections `What exists`, `Business case`, `Pain solved`, and `Possible additions`; it must never alter demo state. Use the route-specific content map in `DESIGN.md`, including the attachment-review explanation of configured-form ground truth.
 - Provide the `Start guided demo` spotlight tour specified in `prd.md` and `DESIGN.md`. It must be restartable, keyboard accessible, and strictly non-mutating: navigation and highlighting are allowed, but it may not auto-approve, refine, classify, send, change policies, or otherwise alter demo state. Include progress, `Back`/`Next`/`Exit`, the specified core-route sequence, business-value copy, focus management, and a visible `Continue` fallback whenever a target is unavailable.
+- Implement the Improvement Queue as a governed QA learning-loop simulation: aggregate structured QA approvals/edits/rejections and classification/extraction corrections; run only deterministic offline simulated evaluation; require human approval for versioned activation; show monitoring and rollback. Never silently self-train or auto-deploy from one review, pattern, or candidate.
 - Preserve queue filters when navigating to and from a workbench. Attachment Review is a modal launched from the originating Work Queue request or Response Workbench; preserve that origin and selected attachment when it closes.
 - Optimize first for a 1366×768 laptop while remaining polished on wider screens. Required actions may not disappear at smaller widths.
 - Treat the five-minute leadership-demo narrative in `DESIGN.md` as a critical acceptance path alongside the PRD workflow.
@@ -195,8 +196,9 @@ The persistent left navigation must expose:
 - Knowledge
 - Reporting
 - Administration
+- Improvement Queue
 
-The implementation is not complete unless the PRD's required controls are functional, including queue filters; opening an email and attachment-review modal; editing, refining, approving, rejecting, holding, transferring, and escalating drafts; correcting and approving extracted forms; changing automation and QA settings; pausing delivery; running random QA; changing knowledge; holding affected drafts; sending a delivery batch; and resetting the demo.
+The implementation is not complete unless the PRD's required controls are functional, including queue filters; opening an email and attachment-review modal; editing, refining, approving, rejecting, holding, transferring, and escalating drafts; correcting and approving extracted forms; changing automation and QA settings; pausing delivery; running random QA; changing knowledge; holding affected drafts; sending a delivery batch; aggregating feedback, running a simulated evaluation, approving/activating or dismissing a candidate improvement, monitoring/rolling back the active version; and resetting the demo.
 
 Buttons that appear enabled must do something visible. For intentionally simulated actions, update local state and provide clear feedback rather than leaving dead controls.
 
@@ -233,7 +235,7 @@ Verification is demo-focused, not a production certification exercise. After imp
 3. Start the app and exercise every primary route, including first-visit welcome display, dismissal persistence, and the persistent route-specific `About this screen` help, preferably at the rendered UI level.
 4. Walk the main transcript scenario end to end, including the knowledge-change/100%-QA hold path.
 5. Check browser console output for runtime errors and accessibility warnings.
-6. Verify direct route loads, queue filters, all state-changing controls, cross-screen propagation, the current route's `About this screen` modal, the guided-demo Back/Next/Exit/fallback path, and Reset Demo.
+6. Verify direct route loads, queue filters, all state-changing controls, cross-screen propagation, the current route's `About this screen` modal, the guided-demo Back/Next/Exit/fallback path including Improvement Queue, governed improvement actions, and Reset Demo.
 7. Search visible fixtures for real institutions or personal data and replace anything questionable with unmistakably fictional content.
 8. Review the five-minute demo narrative in `DESIGN.md` at 1366×768 and confirm primary actions remain visible and usable.
 

@@ -4,6 +4,7 @@ import { DemoProvider, useDemo } from './context/DemoContext'
 import AdministrationPage from './pages/AdministrationPage'
 import AgentControlsPage from './pages/AgentControlsPage'
 import DashboardPage from './pages/DashboardPage'
+import ImprovementQueuePage from './pages/ImprovementQueuePage'
 import KnowledgePage from './pages/KnowledgePage'
 import NotFoundPage from './pages/NotFoundPage'
 import ReleaseQueuePage from './pages/ReleaseQueuePage'
@@ -43,6 +44,7 @@ export default function App() {
       <Route path="form-review" element={<Navigate to="/work-queue" replace />} />
       <Route path="agent-controls" element={<AgentControlsPage />} />
       <Route path="knowledge" element={<KnowledgePage />} />
+      <Route path="improvement-queue" element={<ImprovementQueuePage />} />
       <Route path="reporting" element={<ReportingPage />} />
       <Route path="administration" element={<AdministrationPage />} />
       <Route path="*" element={<NotFoundPage />} />

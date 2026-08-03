@@ -12,7 +12,7 @@ test('guided demo explains the cross-screen workflow and can restart', async ({ 
 
   const tour = page.locator('.guided-tour__card')
   await expect(tour).toBeVisible()
-  await expect(tour).toContainText('Step 1 of 7')
+  await expect(tour).toContainText('Step 1 of 8')
   await expect(tour).toContainText('See the whole correspondence operation')
   await expect(page.locator('.guided-tour__spotlight')).toBeVisible()
 
@@ -34,23 +34,24 @@ test('guided demo explains the cross-screen workflow and can restart', async ({ 
     'Deliver only after safeguards are satisfied',
     'Make approved guidance traceable',
     'Tune automation to institutional risk',
+    'Turn QA feedback into accountable improvements',
   ]) {
     await tour.getByRole('button', { name: 'Next' }).click()
     await expect(tour).toContainText(expectedTitle)
   }
-  await expect(tour).toContainText('Step 7 of 7')
+  await expect(tour).toContainText('Step 8 of 8')
   await tour.getByRole('button', { name: 'Finish' }).click()
   await expect(tour).toBeHidden()
 
   await page.getByRole('button', { name: 'Start guided demo' }).click()
-  await expect(tour).toContainText('Step 1 of 7')
+  await expect(tour).toContainText('Step 1 of 8')
   await page.evaluate(() => {
     document.querySelector('[data-tour="dashboard-overview"]')?.remove()
     window.dispatchEvent(new Event('resize'))
   })
   await expect(tour).toContainText('This screen loaded without the expected highlight', { timeout: 2_000 })
   await tour.getByRole('button', { name: 'Continue' }).click()
-  await expect(tour).toContainText('Step 2 of 7')
+  await expect(tour).toContainText('Step 2 of 8')
   await page.keyboard.press('Escape')
   await expect(tour).toBeHidden()
   await expect(page.getByRole('button', { name: 'Start guided demo' })).toBeFocused()
@@ -65,6 +66,7 @@ test('all primary routes render without browser errors', async ({ page }) => {
     ['/work-queue', 'Work Queue', 'Work Queue'],
     ['/release-queue', 'Delivery Queue', 'Delivery Queue'],
     ['/agent-controls', 'Agent Controls', 'Agent Controls'],
+    ['/improvement-queue', 'Improvement Queue', 'Improvement Queue'],
     ['/knowledge', 'Knowledge', 'Knowledge'],
     ['/reporting', 'Program reporting', 'Reporting'],
     ['/administration', 'Administration', 'Administration'],
@@ -124,7 +126,7 @@ test('leadership transcript workflow completes and resets', async ({ page }) => 
   await expect(page.getByRole('dialog', { name: 'Attachment review' })).toBeHidden()
 
   await page.getByRole('button', { name: 'Approve for delivery' }).click()
-  await expect(page.getByText('Approved for delivery and added to the Registrar delivery batch.')).toBeVisible()
+  await expect(page.getByText('Approved for delivery. The QA outcome was captured in Improvement Queue.')).toBeVisible()
   await page.getByRole('link', { name: /Delivery Queue/ }).click()
   const registrarBatch = page.getByRole('row', { name: /Registrar · Aug 2 afternoon delivery/ })
   await expect(registrarBatch).toContainText('1')
@@ -146,6 +148,40 @@ test('leadership transcript workflow completes and resets', async ({ page }) => 
   await resetDialog.getByRole('button', { name: 'Reset Demo' }).click()
   await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon delivery/ })).toContainText('20%')
   await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon delivery/ })).toContainText('Scheduled')
+})
+
+test('qa feedback drives an evaluated, human-approved, reversible improvement', async ({ page }) => {
+  await page.goto('/work-queue/email-transcript-001')
+  await dismissWelcome(page)
+  await page.getByRole('button', { name: 'Make warmer' }).click()
+  await page.getByRole('button', { name: 'Approve for delivery' }).click()
+  await expect(page.getByText('Approved for delivery. The QA outcome was captured in Improvement Queue.')).toBeVisible()
+
+  await page.getByRole('link', { name: /Improvement Queue/ }).click()
+  await expect(page.getByRole('heading', { name: 'Improvement Queue', exact: true })).toBeVisible()
+  await expect(page.getByText('No silent self-training', { exact: true })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'QA feedback captured: 6' })).toBeVisible()
+
+  const detail = page.locator('.detail-panel')
+  await expect(detail.getByRole('heading', { name: 'Student-facing response tone' })).toBeVisible()
+  await expect(page.locator('.proposal-panel')).toContainText('15 supporting observations')
+  await detail.getByRole('button', { name: 'Run simulated evaluation' }).click()
+  await expect(detail.getByText('Evaluated', { exact: true })).toBeVisible()
+  await expect(detail).toContainText('15 governed observations')
+  await expect(detail).toContainText('Projected outcome')
+
+  await detail.getByRole('button', { name: 'Approve and activate' }).click()
+  const activateDialog = page.getByRole('dialog', { name: 'Approve and activate this improvement?' })
+  await activateDialog.getByRole('button', { name: 'Approve and activate' }).click()
+  await expect(page.locator('.active-version')).toContainText('agent-v1.5-tone')
+  await expect(detail.getByText('Active', { exact: true })).toBeVisible()
+
+  await detail.getByRole('button', { name: 'Roll back version' }).click()
+  const rollbackDialog = page.getByRole('dialog', { name: 'Roll back this improvement?' })
+  await rollbackDialog.getByRole('button', { name: 'Roll back version' }).click()
+  await expect(page.locator('.active-version')).toContainText('agent-v1.4')
+  await expect(detail.getByText('Rolled back', { exact: true })).toBeVisible()
+  await expect(page.getByText('agent-v1.5-tone was rolled back to agent-v1.4.')).toBeVisible()
 })
 
 test('queue filtering and simulated batch delivery work', async ({ page }) => {

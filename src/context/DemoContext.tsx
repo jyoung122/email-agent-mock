@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components -- demo context intentionally co-locates its hook */
 import { createContext, useCallback, useContext, useMemo, useState, type PropsWithChildren } from 'react'
 import { createInitialDemoState, PRIMARY_RELEASE_BATCH_ID, TRANSCRIPT_KNOWLEDGE_ID } from '../data/mockData'
-import type { AgentMode, Attachment, AuditEvent, DemoSelections, DemoState, EmailStatus, ExtractedField, ExtractedForm, ExtractionRun, FormDefinition, QaPolicy, ReleaseBatch } from '../types'
+import type { AgentMode, Attachment, AuditEvent, DemoSelections, DemoState, EmailStatus, ExtractedField, ExtractedForm, ExtractionRun, FormDefinition, ImprovementProposal, QaFeedbackEvent, QaPolicy, ReleaseBatch } from '../types'
 
 export type RefinementAction = 'warmer' | 'concise' | 'missing-documents' | 'approved-language' | 'restore'
 export type KnowledgeImpactAction = 'revalidate' | 'increase-qa' | 'hold-batch' | 'continue'
@@ -35,6 +35,10 @@ export interface DemoActions {
   releaseBatch: (batchId: string) => void
   markKnowledgeChanged: (knowledgeId?: string) => void
   applyKnowledgeImpact: (action: KnowledgeImpactAction, knowledgeId?: string) => void
+  evaluateImprovement: (proposalId: string) => void
+  activateImprovement: (proposalId: string) => void
+  rollbackImprovement: (proposalId: string) => void
+  dismissImprovement: (proposalId: string) => void
   resetDemo: () => void
 }
 export interface DemoContextValue extends DemoState, DemoActions {
@@ -47,7 +51,8 @@ const DemoContext = createContext<DemoContextValue | null>(null)
 const now = () => 'Aug 2, 2026 · 10:24 AM ET'
 const event = (action: string, detail: string, partial: Omit<AuditEvent, 'id' | 'timestamp' | 'action' | 'detail' | 'actor'> = {}): AuditEvent => ({ id: `audit-local-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, timestamp: now(), actor: 'Morgan Lee', action, detail, ...partial })
 const updateEmail = (state: DemoState, emailId: string, status: EmailStatus, extra: Partial<DemoState['emails'][number]> = {}): DemoState['emails'] => state.emails.map((emailRecord) => emailRecord.id === emailId ? { ...emailRecord, ...extra, status, draft: emailRecord.draft ? { ...emailRecord.draft, status } : undefined } : emailRecord)
-const addEvent = (state: DemoState, next: Omit<AuditEvent, 'id' | 'timestamp' | 'actor'> & Partial<Pick<AuditEvent, 'actor'>>): DemoState => ({ ...state, auditEvents: [...state.auditEvents, event(next.action, next.detail, { emailId: next.emailId, draftId: next.draftId, formId: next.formId, attachmentId: next.attachmentId, batchId: next.batchId, knowledgeId: next.knowledgeId, ...(next.actor ? { actor: next.actor } : {}) })] })
+const addEvent = (state: DemoState, next: Omit<AuditEvent, 'id' | 'timestamp' | 'actor'> & Partial<Pick<AuditEvent, 'actor'>>): DemoState => ({ ...state, auditEvents: [...state.auditEvents, event(next.action, next.detail, { emailId: next.emailId, draftId: next.draftId, formId: next.formId, attachmentId: next.attachmentId, batchId: next.batchId, knowledgeId: next.knowledgeId, proposalId: next.proposalId, ...(next.actor ? { actor: next.actor } : {}) })] })
+const feedback = (next: Omit<QaFeedbackEvent, 'id' | 'timestamp'>): QaFeedbackEvent => ({ id: `feedback-local-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, timestamp: now(), ...next })
 const withAttachments = (state: DemoState, attachments: Attachment[]): Pick<DemoState, 'attachments' | 'emails'> => ({ attachments, emails: state.emails.map((email) => ({ ...email, attachments: attachments.filter((attachment) => attachment.emailId === email.id) })) })
 const assessmentIdFor = (attachmentId: string) => `assessment-${attachmentId.replace('attachment-', '')}`
 const extractionRunIdFor = (attachmentId: string) => `extraction-${attachmentId.replace('attachment-', '')}-corrected`
@@ -91,7 +96,8 @@ export function DemoProvider({ children }: PropsWithChildren) {
     const documentAssessments = previous.documentAssessments.some((item) => item.attachmentId === attachmentId) ? previous.documentAssessments.map((item) => item.attachmentId === attachmentId ? assessment : item) : [...previous.documentAssessments, assessment]
     const extractionRuns = generatedRun ? [...previous.extractionRuns.filter((item) => item.attachmentId !== attachmentId), generatedRun] : previous.extractionRuns.filter((item) => item.attachmentId !== attachmentId)
     const forms = generatedForm ? [...previous.forms.filter((item) => item.attachmentId !== attachmentId), generatedForm] : previous.forms.filter((item) => item.attachmentId !== attachmentId)
-    return addEvent({ ...previous, ...withAttachments(previous, attachments), documentAssessments, extractionRuns, forms }, { action: 'Corrected attachment classification', detail: definition ? `${attachment.fileName} mapped to ${definition.name} ${version?.version ?? ''}.` : `${attachment.fileName} marked as unmatched.`, emailId: attachment.emailId, attachmentId })
+    const qaFeedback = [...previous.qaFeedback, feedback({ category: 'Classification', decision: 'Corrected', summary: definition ? `${attachment.fileName} was corrected to ${definition.name}.` : `${attachment.fileName} was retained as unmatched supporting material.`, source: 'Attachment review', emailId: attachment.emailId, attachmentId })]
+    return addEvent({ ...previous, ...withAttachments(previous, attachments), documentAssessments, extractionRuns, forms, qaFeedback }, { action: 'Corrected attachment classification', detail: definition ? `${attachment.fileName} mapped to ${definition.name} ${version?.version ?? ''}.` : `${attachment.fileName} marked as unmatched.`, emailId: attachment.emailId, attachmentId })
   }), [])
   const updateDraft = useCallback((emailId: string, body: string) => setState((previous) => {
     const target = previous.emails.find((item) => item.id === emailId)
@@ -117,11 +123,16 @@ export function DemoProvider({ children }: PropsWithChildren) {
     return draft ? addEvent(previous, { action: 'Saved draft', detail: `Draft version ${draft.version} saved locally.`, emailId, draftId: draft.id }) : previous
   }), [])
   const approveDraft = useCallback((emailId: string) => setState((previous) => {
-    const draft = previous.emails.find((item) => item.id === emailId)?.draft
-    if (!draft) return previous
+    const reviewedEmail = previous.emails.find((item) => item.id === emailId)
+    const draft = reviewedEmail?.draft
+    if (!draft || (reviewedEmail.status === 'Approved' && reviewedEmail.qaStatus === 'Passed')) return previous
     const emails = updateEmail(previous, emailId, 'Approved', { qaStatus: 'Passed' })
     const releaseBatches = previous.releaseBatches.map((batch) => batch.id === previous.emails.find((item) => item.id === emailId)?.releaseBatchId ? { ...batch, approvedDraftIds: Array.from(new Set([...batch.approvedDraftIds, draft.id])), heldDraftIds: batch.heldDraftIds.filter((id) => id !== draft.id) } : batch)
-    return addEvent({ ...previous, emails, releaseBatches }, { action: 'Approved for delivery', detail: 'Draft approved and moved into its simulated delivery batch.', emailId, draftId: draft.id, batchId: previous.emails.find((item) => item.id === emailId)?.releaseBatchId })
+    const edited = draft.body !== draft.originalBody || draft.refinementHistory.length > 0
+    const proposalId = draft.refinementHistory.includes('Make warmer') ? 'proposal-tone-warmth' : undefined
+    const qaFeedback = [...previous.qaFeedback, feedback({ category: 'Response', decision: edited ? 'Approved with edits' : 'Approved unchanged', summary: edited ? 'Reviewer approved the response after a local draft edit or predefined refinement.' : 'Reviewer approved the response without changing the simulated draft.', source: reviewedEmail?.qaStatus === 'Selected for QA' ? 'Random QA' : 'Reviewer approval', emailId, proposalId })]
+    const improvementProposals = previous.improvementProposals.map((proposal) => proposal.id === proposalId ? { ...proposal, evidenceCount: proposal.evidenceCount + 1 } : proposal)
+    return addEvent({ ...previous, emails, releaseBatches, qaFeedback, improvementProposals }, { action: 'Approved for delivery', detail: 'Draft approved, moved into its simulated delivery batch, and captured as governed QA feedback.', emailId, draftId: draft.id, batchId: previous.emails.find((item) => item.id === emailId)?.releaseBatchId })
   }), [])
   const holdDraft = useCallback((emailId: string, reason = 'Held by reviewer') => setState((previous) => {
     const draft = previous.emails.find((item) => item.id === emailId)?.draft
@@ -129,7 +140,10 @@ export function DemoProvider({ children }: PropsWithChildren) {
     const releaseBatches = previous.releaseBatches.map((batch) => batch.id === previous.emails.find((item) => item.id === emailId)?.releaseBatchId && draft ? { ...batch, heldDraftIds: Array.from(new Set([...batch.heldDraftIds, draft.id])), approvedDraftIds: batch.approvedDraftIds.filter((id) => id !== draft.id) } : batch)
     return draft ? addEvent({ ...previous, emails, releaseBatches }, { action: 'Held draft', detail: reason, emailId, draftId: draft.id }) : previous
   }), [])
-  const rejectDraft = useCallback((emailId: string) => setState((previous) => addEvent({ ...previous, emails: updateEmail(previous, emailId, 'Rejected') }, { action: 'Rejected draft', detail: 'Draft rejected for simulated revision.', emailId })), [])
+  const rejectDraft = useCallback((emailId: string) => setState((previous) => {
+    const qaFeedback = [...previous.qaFeedback, feedback({ category: 'Response', decision: 'Rejected', summary: 'Reviewer rejected the simulated response draft for revision.', source: 'Reviewer decision', emailId })]
+    return addEvent({ ...previous, emails: updateEmail(previous, emailId, 'Rejected'), qaFeedback }, { action: 'Rejected draft', detail: 'Draft rejected for simulated revision.', emailId })
+  }), [])
   const transferEmail = useCallback((emailId: string, departmentId: string, mailboxId?: string) => setState((previous) => {
     const destination = previous.mailboxes.find((mailbox) => mailbox.id === mailboxId || mailbox.departmentId === departmentId)
     const emails = previous.emails.map((item) => item.id === emailId ? { ...item, departmentId, mailboxId: destination?.id ?? item.mailboxId, institutionId: destination?.institutionId ?? item.institutionId, status: 'Specialist Review' as const } : item)
@@ -147,7 +161,8 @@ export function DemoProvider({ children }: PropsWithChildren) {
     const validationStatus = updatedForm.fields.every((entry) => entry.validation === 'Valid') ? 'Valid' as const : updatedForm.fields.some((entry) => entry.validation === 'Invalid') ? 'Invalid' as const : 'Warnings' as const
     const attachments = previous.attachments.map((item) => item.id === form.attachmentId ? { ...item, validationStatus, extractionStatus: validationStatus === 'Valid' ? 'Extracted' as const : 'Review required' as const } : item)
     const extractionRuns = previous.extractionRuns.map((item) => item.id === form.extractionRunId ? { ...item, validationStatus, status: validationStatus === 'Valid' ? 'Extracted' as const : 'Review required' as const } : item)
-    return addEvent({ ...previous, forms, ...withAttachments(previous, attachments), extractionRuns }, { action: 'Corrected extracted field', detail: `${field.label} was corrected and approved.`, formId, emailId: form.emailId, attachmentId: form.attachmentId })
+    const qaFeedback = [...previous.qaFeedback, feedback({ category: 'Extraction', decision: 'Corrected', summary: `${field.label} was corrected and approved during form review.`, source: 'Form review', emailId: form.emailId, formId, attachmentId: form.attachmentId })]
+    return addEvent({ ...previous, forms, ...withAttachments(previous, attachments), extractionRuns, qaFeedback }, { action: 'Corrected extracted field', detail: `${field.label} was corrected and approved.`, formId, emailId: form.emailId, attachmentId: form.attachmentId })
   }), [])
   const approveFormField = useCallback((formId: string, fieldId: string) => setState((previous) => ({ ...previous, forms: previous.forms.map((form) => form.id === formId ? { ...form, fields: form.fields.map((field) => field.id === fieldId ? { ...field, approved: true } : field) } : form) })), [])
   const approveFormExtraction = useCallback((formId: string) => setState((previous) => {
@@ -213,11 +228,38 @@ export function DemoProvider({ children }: PropsWithChildren) {
       return addEvent(previous, { action: 'Continued with current settings', detail: 'Policy conflict acknowledged; current simulated delivery settings retained.', knowledgeId })
     })
   }, [])
+  const evaluateImprovement = useCallback((proposalId: string) => setState((previous) => {
+    const proposal = previous.improvementProposals.find((item) => item.id === proposalId)
+    if (!proposal || proposal.status !== 'Candidate') return previous
+    const updated: ImprovementProposal = { ...proposal, status: 'Evaluated', evaluationSummary: `Simulated offline evaluation reviewed ${proposal.evidenceCount} governed feedback events. Projected outcome: ${proposal.projectedMetric}.` }
+    return addEvent({ ...previous, improvementProposals: previous.improvementProposals.map((item) => item.id === proposalId ? updated : item) }, { action: 'Evaluated improvement proposal', detail: `${proposal.target} was evaluated using fixed demonstration feedback; no live retraining occurred.`, proposalId })
+  }), [])
+  const activateImprovement = useCallback((proposalId: string) => setState((previous) => {
+    const proposal = previous.improvementProposals.find((item) => item.id === proposalId)
+    const anotherVersionIsActive = previous.improvementProposals.some((item) => item.id !== proposalId && item.status === 'Active')
+    if (!proposal || proposal.status !== 'Evaluated' || proposal.currentVersion !== previous.activeAgentVersion || anotherVersionIsActive) return previous
+    const updated: ImprovementProposal = { ...proposal, status: 'Active', evaluationSummary: `${proposal.evaluationSummary} Activated as the simulated governed agent version; no live retraining occurred.` }
+    const qaFeedback = [...previous.qaFeedback, feedback({ category: 'Response', decision: 'Observed', summary: `${proposal.target} activated as a simulated governed version change.`, source: 'Improvement governance', proposalId })]
+    return addEvent({ ...previous, improvementProposals: previous.improvementProposals.map((item) => item.id === proposalId ? updated : item), activeAgentVersion: proposal.candidateVersion, qaFeedback }, { action: 'Activated improvement proposal', detail: `${proposal.candidateVersion} is now the active simulated agent version; this does not imply live retraining.`, proposalId })
+  }), [])
+  const rollbackImprovement = useCallback((proposalId: string) => setState((previous) => {
+    const proposal = previous.improvementProposals.find((item) => item.id === proposalId)
+    if (!proposal || proposal.status !== 'Active') return previous
+    const updated: ImprovementProposal = { ...proposal, status: 'Rolled back', evaluationSummary: `${proposal.evaluationSummary} Rolled back to ${proposal.currentVersion}; the activation remains auditable.` }
+    const qaFeedback = [...previous.qaFeedback, feedback({ category: 'Response', decision: 'Observed', summary: `${proposal.candidateVersion} was rolled back to ${proposal.currentVersion} through governed monitoring.`, source: 'Improvement governance', proposalId })]
+    return addEvent({ ...previous, improvementProposals: previous.improvementProposals.map((item) => item.id === proposalId ? updated : item), activeAgentVersion: proposal.currentVersion, qaFeedback }, { action: 'Rolled back improvement proposal', detail: `${proposal.candidateVersion} was rolled back to ${proposal.currentVersion} in the simulation.`, proposalId })
+  }), [])
+  const dismissImprovement = useCallback((proposalId: string) => setState((previous) => {
+    const proposal = previous.improvementProposals.find((item) => item.id === proposalId)
+    if (!proposal || proposal.status === 'Active' || proposal.status === 'Dismissed' || proposal.status === 'Rolled back') return previous
+    const updated: ImprovementProposal = { ...proposal, status: 'Dismissed', evaluationSummary: `${proposal.evaluationSummary} Dismissed in this demonstration; the active agent version is unchanged.` }
+    return addEvent({ ...previous, improvementProposals: previous.improvementProposals.map((item) => item.id === proposalId ? updated : item) }, { action: 'Dismissed improvement proposal', detail: `${proposal.target} was dismissed; no agent behavior changed.`, proposalId })
+  }), [])
   const resetDemo = useCallback(() => setState(createInitialDemoState()), [])
   const value = useMemo<DemoContextValue>(() => {
-    const actions: DemoActions = { selectScope, selectAttachment, confirmAttachmentClassification, correctAttachmentClassification, updateDraft, applyRefinement, saveDraft, approveDraft, holdDraft, rejectDraft, transferEmail, escalateEmail, selectFormField, correctFormField, approveFormField, approveFormExtraction, requestResubmission, markFormUnreadable, updatePolicy, setReleasePaused, updateBatch, runRandomQa, setBatchQaToFullReview, holdBatch, resumeBatch, releaseBatch, markKnowledgeChanged, applyKnowledgeImpact, resetDemo }
+    const actions: DemoActions = { selectScope, selectAttachment, confirmAttachmentClassification, correctAttachmentClassification, updateDraft, applyRefinement, saveDraft, approveDraft, holdDraft, rejectDraft, transferEmail, escalateEmail, selectFormField, correctFormField, approveFormField, approveFormExtraction, requestResubmission, markFormUnreadable, updatePolicy, setReleasePaused, updateBatch, runRandomQa, setBatchQaToFullReview, holdBatch, resumeBatch, releaseBatch, markKnowledgeChanged, applyKnowledgeImpact, evaluateImprovement, activateImprovement, rollbackImprovement, dismissImprovement, resetDemo }
     return { ...state, ...actions, state, actions }
-  }, [state, selectScope, selectAttachment, confirmAttachmentClassification, correctAttachmentClassification, updateDraft, applyRefinement, saveDraft, approveDraft, holdDraft, rejectDraft, transferEmail, escalateEmail, selectFormField, correctFormField, approveFormField, approveFormExtraction, requestResubmission, markFormUnreadable, updatePolicy, setReleasePaused, updateBatch, runRandomQa, setBatchQaToFullReview, holdBatch, resumeBatch, releaseBatch, markKnowledgeChanged, applyKnowledgeImpact, resetDemo])
+  }, [state, selectScope, selectAttachment, confirmAttachmentClassification, correctAttachmentClassification, updateDraft, applyRefinement, saveDraft, approveDraft, holdDraft, rejectDraft, transferEmail, escalateEmail, selectFormField, correctFormField, approveFormField, approveFormExtraction, requestResubmission, markFormUnreadable, updatePolicy, setReleasePaused, updateBatch, runRandomQa, setBatchQaToFullReview, holdBatch, resumeBatch, releaseBatch, markKnowledgeChanged, applyKnowledgeImpact, evaluateImprovement, activateImprovement, rollbackImprovement, dismissImprovement, resetDemo])
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>
 }
 

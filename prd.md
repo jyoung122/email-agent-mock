@@ -669,6 +669,14 @@ Provide concise route-specific content for Program Dashboard (network health and
 
 The attachment-review modal should likewise explain the document-intake path: incoming artifact → configured form/version classification → canonical extraction → validation. It must state that configured form definitions are the ground truth, that unmatched artifacts may remain supporting material, and may cite visual mapping or exception handling as future additions.
 
+## Guided demo tour
+
+Provide a persistent `Start guided demo` entry point that launches a restartable, keyboard-accessible spotlight tour. The tour is a presentation aid only: it must never auto-mutate fixture-derived demo state, approve a draft, alter a policy, or otherwise trigger a workflow action.
+
+The guided sequence moves through Dashboard, Work Queue, the Registrar transcript Response Workbench, attachment intake, Release Queue, Knowledge, and Agent Controls. Each step navigates to its required route or attachment-review context, highlights the relevant visible target, and explains the business value of that screen in concise leadership-facing copy.
+
+Show step progress and provide `Back`, `Next`, and `Exit` controls. `Start guided demo` must restart the sequence from the first step at any time. Tour controls, focus movement, and route changes must be keyboard operable. If a target is unavailable because of a viewport, route, reset, or rendering condition, show a clear fallback message with a `Continue` action rather than blocking the tour or failing silently.
+
 ## UX and Visual Style
 
 Use a restrained Microsoft enterprise-inspired design:

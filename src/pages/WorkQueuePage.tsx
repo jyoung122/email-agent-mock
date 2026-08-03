@@ -52,7 +52,7 @@ export default function WorkQueuePage() {
       <div><span>Form issues</span><strong>{state.forms.filter((item) => item.reviewStatus !== 'Approved').length}</strong></div>
       <div><span>Held</span><strong>{state.emails.filter((item) => item.status === 'Held').length}</strong></div>
     </section>
-    <section className="panel queue-panel">
+    <section className="panel queue-panel" data-tour="work-queue-primary">
       <div className="queue-filters">
         <label className="queue-search"><Search size={16} aria-hidden="true" /><span className="sr-only">Search queue</span><input value={filter('q')} onChange={(event) => setFilter('q', event.target.value)} placeholder="Search sender, subject, mailbox…" /></label>
         <label><span className="sr-only">Institution</span><select value={filter('institution')} onChange={(event) => setFilter('institution', event.target.value)}><option value="">All institutions</option>{state.institutions.map((item) => <option key={item.id} value={item.id}>{item.shortName}</option>)}</select><ChevronDown size={14} /></label>

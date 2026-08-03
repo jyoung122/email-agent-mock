@@ -5,6 +5,57 @@ const dismissWelcome = async (page: Page) => {
   if (await welcome.isVisible()) await welcome.getByRole('button', { name: 'Explore current screen' }).click()
 }
 
+test('guided demo explains the cross-screen workflow and can restart', async ({ page }) => {
+  await page.goto('/')
+  const welcome = page.getByRole('dialog', { name: 'Welcome to SSI Correspondence' })
+  await welcome.getByRole('button', { name: 'Start guided demo' }).click()
+
+  const tour = page.locator('.guided-tour__card')
+  await expect(tour).toBeVisible()
+  await expect(tour).toContainText('Step 1 of 7')
+  await expect(tour).toContainText('See the whole correspondence operation')
+  await expect(page.locator('.guided-tour__spotlight')).toBeVisible()
+
+  await tour.getByRole('button', { name: 'Next' }).click()
+  await expect(page.getByRole('heading', { name: 'Work Queue', exact: true })).toBeVisible()
+  await expect(tour).toContainText('Bring every request into one work queue')
+
+  await page.keyboard.press('ArrowRight')
+  await expect(page.getByRole('heading', { name: 'Proposed response' })).toBeVisible()
+  await expect(tour).toContainText('Review the proposed response in context')
+
+  await page.keyboard.press('ArrowRight')
+  await expect(tour).toContainText('Classify documents against configured forms')
+  await page.keyboard.press('ArrowLeft')
+  await expect(tour).toContainText('Review the proposed response in context')
+
+  for (const expectedTitle of [
+    'Classify documents against configured forms',
+    'Release only after safeguards are satisfied',
+    'Make approved guidance traceable',
+    'Tune automation to institutional risk',
+  ]) {
+    await tour.getByRole('button', { name: 'Next' }).click()
+    await expect(tour).toContainText(expectedTitle)
+  }
+  await expect(tour).toContainText('Step 7 of 7')
+  await tour.getByRole('button', { name: 'Finish' }).click()
+  await expect(tour).toBeHidden()
+
+  await page.getByRole('button', { name: 'Start guided demo' }).click()
+  await expect(tour).toContainText('Step 1 of 7')
+  await page.evaluate(() => {
+    document.querySelector('[data-tour="dashboard-overview"]')?.remove()
+    window.dispatchEvent(new Event('resize'))
+  })
+  await expect(tour).toContainText('This screen loaded without the expected highlight', { timeout: 2_000 })
+  await tour.getByRole('button', { name: 'Continue' }).click()
+  await expect(tour).toContainText('Step 2 of 7')
+  await page.keyboard.press('Escape')
+  await expect(tour).toBeHidden()
+  await expect(page.getByRole('button', { name: 'Start guided demo' })).toBeFocused()
+})
+
 test('all primary routes render without browser errors', async ({ page }) => {
   const browserErrors: string[] = []
   page.on('console', (message) => { if (message.type() === 'error') browserErrors.push(message.text()) })

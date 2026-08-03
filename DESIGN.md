@@ -206,6 +206,12 @@ The footer has one primary dismissal action, `Start guided demo`, and a short li
 
 The attachment-review modal also offers its own concise `About this review` explanation when launched: it identifies the incoming artifact, matches it against configured form definitions/versions, validates canonical fields, and keeps unmatched artifacts as supporting material. It demonstrates safer document intake; possible additions include visual mapping and assisted exception handling.
 
+### Guided demo tour
+
+Expose a persistent `Start guided demo` entry point for the leadership narrative. It launches a restartable spotlight tour that does not change any local demo state or invoke operational controls. The exact sequence is: Program Dashboard → Work Queue → Registrar transcript Response Workbench → transcript attachment intake → Release Queue → Knowledge → Agent Controls.
+
+At every step, navigate to the needed route or attachment-review context, place a visible spotlight around the relevant target, and use concise business-value copy. The tour panel shows `Step n of n` plus `Back`, `Next`, and `Exit`; starting it again always restarts at Dashboard. All tour controls and route changes are keyboard operable, focus enters the current tour panel, and focus returns to the invoking control on exit. If the expected target is missing or cannot be positioned, show a visible fallback explaining that the screen is still available and offer `Continue`; never auto-run a state-changing action to make a target appear.
+
 ### Data tables
 
 - Use a sticky 40px header and 48px body rows.

@@ -65,14 +65,22 @@
   margin-top: 1px;
 }
 
+.ssi-guided-demo-button,
+.ssi-screen-guide-button,
+.ssi-reset-button { white-space: nowrap; }
+
+@media (max-width: 1400px) {
+  .ssi-user strong, .ssi-user small { display: none; }
+}
+
 @media (max-width: 700px) {
   .screen-guide-grid { grid-template-columns: 1fr; }
   .screen-guide-section--wide { grid-column: auto; }
 }
 
 @media (max-width: 900px) {
-  .ssi-screen-guide-button { width: 36px; padding: 0; font-size: 0; }
-  .ssi-screen-guide-button svg { margin: 0; }
+  .ssi-screen-guide-button, .ssi-guided-demo-button { width: 36px; padding: 0; font-size: 0; }
+  .ssi-screen-guide-button svg, .ssi-guided-demo-button svg { margin: 0; }
 }
 
 .welcome-demo { display: grid; gap: 13px; }

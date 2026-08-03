@@ -59,7 +59,7 @@ export default function DashboardPage() {
       </div>
       {notice && <div className="page-toast" role="status">{notice}<button onClick={() => setNotice('')} aria-label="Dismiss notification">×</button></div>}
 
-      <section className="metric-strip" aria-label={`${view} performance metrics`}>
+      <section className="metric-strip" aria-label={`${view} performance metrics`} data-tour="dashboard-overview">
         {metrics.map(([label, value, trend, direction]) => (
           <article className="metric-card" key={label}>
             <span>{label}</span><strong>{value}</strong>

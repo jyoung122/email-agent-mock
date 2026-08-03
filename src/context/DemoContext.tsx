@@ -104,7 +104,7 @@ export function DemoProvider({ children }: PropsWithChildren) {
     const texts: Record<RefinementAction, { label: string; body: string }> = {
       warmer: { label: 'Make warmer', body: target.draft.body.replace('Thank you for your transcript request.', 'Thank you for reaching out about your transcript request — we are glad to help.') },
       concise: { label: 'Make more concise', body: 'Hello Alex,\n\nYour authorization form is missing a signature. Please sign and return it to this mailbox. We will process your transcript request within three business days after receipt.\n\nSincerely,\nNorthstar Fictional University Registrar Services' },
-      'missing-documents': { label: 'Explain missing documents', body: target.draft.body.replace('Our review found that the attached form is missing a signature.', 'Our review found that the authorization form needs your signature before we may release an official transcript.') },
+      'missing-documents': { label: 'Explain missing documents', body: target.draft.body.replace('Our review found that the attached form is missing a signature.', 'Our review found that the authorization form needs your signature before we may send an official transcript.') },
       'approved-language': { label: 'Use approved transcript language', body: target.draft.body.replace('We can send an official transcript', 'Per the approved transcript policy, we may send an official transcript only after receiving a signed authorization') },
       restore: { label: 'Restore original draft', body: target.draft.originalBody },
     }
@@ -121,7 +121,7 @@ export function DemoProvider({ children }: PropsWithChildren) {
     if (!draft) return previous
     const emails = updateEmail(previous, emailId, 'Approved', { qaStatus: 'Passed' })
     const releaseBatches = previous.releaseBatches.map((batch) => batch.id === previous.emails.find((item) => item.id === emailId)?.releaseBatchId ? { ...batch, approvedDraftIds: Array.from(new Set([...batch.approvedDraftIds, draft.id])), heldDraftIds: batch.heldDraftIds.filter((id) => id !== draft.id) } : batch)
-    return addEvent({ ...previous, emails, releaseBatches }, { action: 'Approved for release', detail: 'Draft approved and moved into its simulated release batch.', emailId, draftId: draft.id, batchId: previous.emails.find((item) => item.id === emailId)?.releaseBatchId })
+    return addEvent({ ...previous, emails, releaseBatches }, { action: 'Approved for delivery', detail: 'Draft approved and moved into its simulated delivery batch.', emailId, draftId: draft.id, batchId: previous.emails.find((item) => item.id === emailId)?.releaseBatchId })
   }), [])
   const holdDraft = useCallback((emailId: string, reason = 'Held by reviewer') => setState((previous) => {
     const draft = previous.emails.find((item) => item.id === emailId)?.draft
@@ -165,7 +165,7 @@ export function DemoProvider({ children }: PropsWithChildren) {
   }), [])
   const markFormUnreadable = useCallback((formId: string) => setState((previous) => ({ ...previous, forms: previous.forms.map((form) => form.id === formId ? { ...form, reviewStatus: 'Unreadable' } : form) })), [])
   const updatePolicy = useCallback((policyId: string, changes: Partial<QaPolicy>) => setState((previous) => addEvent({ ...previous, policies: previous.policies.map((policy) => policy.id === policyId ? { ...policy, ...changes } : policy) }, { action: 'Updated agent controls', detail: 'Policy settings saved in this demonstration.', batchId: PRIMARY_RELEASE_BATCH_ID })), [])
-  const setReleasePaused = useCallback((paused: boolean) => setState((previous) => addEvent({ ...previous, policies: previous.policies.map((policy) => ({ ...policy, releasesPaused: paused, mode: paused ? 'Paused' : policy.mode })), releaseBatches: previous.releaseBatches.map((batch) => ({ ...batch, status: paused ? 'Paused' : batch.status === 'Paused' ? 'Scheduled' : batch.status })) }, { action: paused ? 'Paused releases' : 'Resumed releases', detail: paused ? 'All simulated automated releases are paused.' : 'Simulated automated releases are active.' })), [])
+  const setReleasePaused = useCallback((paused: boolean) => setState((previous) => addEvent({ ...previous, policies: previous.policies.map((policy) => ({ ...policy, releasesPaused: paused, mode: paused ? 'Paused' : policy.mode })), releaseBatches: previous.releaseBatches.map((batch) => ({ ...batch, status: paused ? 'Paused' : batch.status === 'Paused' ? 'Scheduled' : batch.status })) }, { action: paused ? 'Paused deliveries' : 'Resumed deliveries', detail: paused ? 'All simulated automated deliveries are paused.' : 'Simulated automated deliveries are active.' })), [])
   const updateBatch = useCallback((batchId: string, changes: Partial<Pick<ReleaseBatch, 'scheduledReleaseAt' | 'status' | 'qaPercentage'>>) => setState((previous) => ({ ...previous, releaseBatches: previous.releaseBatches.map((batch) => batch.id === batchId ? { ...batch, ...changes } : batch) })), [])
   const runRandomQa = useCallback((batchId: string) => setState((previous) => {
     const batch = previous.releaseBatches.find((item) => item.id === batchId)
@@ -176,7 +176,7 @@ export function DemoProvider({ children }: PropsWithChildren) {
     const draftToEmail = new Map(previous.emails.filter((item) => item.draft).map((item) => [item.draft!.id, item.id]))
     const emails = previous.emails.map((item) => item.draft && selected.includes(item.draft.id) ? { ...item, status: 'QA Required' as const, qaStatus: 'Selected for QA' as const, draft: { ...item.draft, status: 'QA Required' as const, qaSelected: true, qaReason: 'Selected for review through random QA sampling' } } : item)
     const releaseBatches = previous.releaseBatches.map((item) => item.id === batchId ? { ...item, randomSelectedDraftIds: selected } : item)
-    return selected.reduce((current, draftId) => addEvent(current, { action: 'Selected for random QA', detail: 'Selected after the release population locked; the agent did not choose the sample.', emailId: draftToEmail.get(draftId), draftId, batchId }), { ...previous, emails, releaseBatches })
+    return selected.reduce((current, draftId) => addEvent(current, { action: 'Selected for random QA', detail: 'Selected after the delivery population locked; the agent did not choose the sample.', emailId: draftToEmail.get(draftId), draftId, batchId }), { ...previous, emails, releaseBatches })
   }), [])
   const setBatchQaToFullReview = useCallback((batchId: string) => setState((previous) => {
     const batch = previous.releaseBatches.find((item) => item.id === batchId)
@@ -185,15 +185,15 @@ export function DemoProvider({ children }: PropsWithChildren) {
     const policies = previous.policies.map((policy) => policy.mailboxId === batch.mailboxId ? { ...policy, randomQaPercentage: 100, mode: 'Full Review' as AgentMode } : policy)
     return addEvent({ ...previous, releaseBatches, policies }, { action: 'QA sample set to 100%', detail: 'All eligible drafts require simulated human QA.', batchId })
   }), [])
-  const holdBatch = useCallback((batchId: string) => setState((previous) => addEvent({ ...previous, releaseBatches: previous.releaseBatches.map((batch) => batch.id === batchId ? { ...batch, status: 'Held' } : batch) }, { action: 'Held release batch', detail: 'Release batch placed on simulated hold.', batchId })), [])
-  const resumeBatch = useCallback((batchId: string) => setState((previous) => addEvent({ ...previous, releaseBatches: previous.releaseBatches.map((batch) => batch.id === batchId ? { ...batch, status: 'Scheduled' } : batch) }, { action: 'Resumed release batch', detail: 'Release batch resumed in this demonstration.', batchId })), [])
+  const holdBatch = useCallback((batchId: string) => setState((previous) => addEvent({ ...previous, releaseBatches: previous.releaseBatches.map((batch) => batch.id === batchId ? { ...batch, status: 'Held' } : batch) }, { action: 'Held delivery batch', detail: 'Delivery batch placed on simulated hold.', batchId })), [])
+  const resumeBatch = useCallback((batchId: string) => setState((previous) => addEvent({ ...previous, releaseBatches: previous.releaseBatches.map((batch) => batch.id === batchId ? { ...batch, status: 'Scheduled' } : batch) }, { action: 'Resumed delivery batch', detail: 'Delivery batch resumed in this demonstration.', batchId })), [])
   const releaseBatch = useCallback((batchId: string) => setState((previous) => {
     const batch = previous.releaseBatches.find((item) => item.id === batchId)
     if (!batch) return previous
     const releasable = batch.approvedDraftIds.filter((id) => !batch.heldDraftIds.includes(id))
     const emails = previous.emails.map((item) => item.draft && releasable.includes(item.draft.id) ? { ...item, status: 'Released' as const, draft: { ...item.draft, status: 'Released' as const } } : item)
     const releaseBatches = previous.releaseBatches.map((item) => item.id === batchId ? { ...item, releasedDraftIds: Array.from(new Set([...item.releasedDraftIds, ...releasable])), status: 'Released' as const } : item)
-    return addEvent({ ...previous, emails, releaseBatches }, { action: 'Released approved responses', detail: `${releasable.length} approved response${releasable.length === 1 ? '' : 's'} released in the simulation.`, batchId })
+    return addEvent({ ...previous, emails, releaseBatches }, { action: 'Delivered approved responses', detail: `${releasable.length} approved response${releasable.length === 1 ? '' : 's'} delivered in the simulation.`, batchId })
   }), [])
   const markKnowledgeChanged = useCallback((knowledgeId = TRANSCRIPT_KNOWLEDGE_ID) => setState((previous) => addEvent({ ...previous, knowledge: previous.knowledge.map((item) => item.id === knowledgeId ? { ...item, changed: true, status: 'Under Review' } : item) }, { action: 'Marked policy changed', detail: 'Staged drafts may be affected by the simulated policy change.', knowledgeId })), [])
   const applyKnowledgeImpact = useCallback((action: KnowledgeImpactAction, knowledgeId = TRANSCRIPT_KNOWLEDGE_ID) => {
@@ -210,7 +210,7 @@ export function DemoProvider({ children }: PropsWithChildren) {
       }
       if (action === 'hold-batch') return addEvent({ ...previous, releaseBatches: previous.releaseBatches.map((batch) => batch.id === PRIMARY_RELEASE_BATCH_ID ? { ...batch, status: 'Held', heldDraftIds: Array.from(new Set([...batch.heldDraftIds, ...article.affectedDraftIds])) } : batch) }, { action: 'Held affected drafts', detail: `${article.affectedDraftIds.length} affected draft(s) held pending revalidation.`, knowledgeId, batchId: PRIMARY_RELEASE_BATCH_ID })
       if (action === 'revalidate') return addEvent(previous, { action: 'Revalidated affected drafts', detail: `${article.affectedDraftIds.length} draft(s) revalidated against the policy update.`, knowledgeId })
-      return addEvent(previous, { action: 'Continued with current settings', detail: 'Policy conflict acknowledged; current simulated release settings retained.', knowledgeId })
+      return addEvent(previous, { action: 'Continued with current settings', detail: 'Policy conflict acknowledged; current simulated delivery settings retained.', knowledgeId })
     })
   }, [])
   const resetDemo = useCallback(() => setState(createInitialDemoState()), [])

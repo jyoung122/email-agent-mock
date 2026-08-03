@@ -29,7 +29,7 @@ const guidedTourSteps: TourStep[] = [
     selector: '[data-tour="work-queue-primary"] .primary-scenario-row .queue-identity',
     eyebrow: 'Prioritized intake',
     title: 'Bring every request into one work queue',
-    description: 'The highlighted transcript request combines email context, risk, QA status, assignment, and release timing.',
+    description: 'The highlighted transcript request combines email context, risk, QA status, assignment, and delivery timing.',
     businessValue: 'Teams stop triaging disconnected inboxes and can focus first on work that needs judgment or missing-information follow-up.',
   },
   {
@@ -52,9 +52,9 @@ const guidedTourSteps: TourStep[] = [
     path: '/release-queue',
     selector: '[data-tour="release-queue-batches"]',
     eyebrow: 'Controlled delivery',
-    title: 'Release only after safeguards are satisfied',
-    description: 'Locked batches expose mandatory review, random QA, approved, held, ready, and scheduled populations before simulated delivery.',
-    businessValue: 'Operations can scale automation while preserving independent QA selection, release holds, and a clear approval boundary.',
+    title: 'Deliver only after safeguards are satisfied',
+    description: 'Locked delivery batches expose mandatory review, random QA, approved, held, ready, and scheduled populations before simulated delivery.',
+    businessValue: 'Operations can scale automation while preserving independent QA selection, delivery holds, and a clear approval boundary.',
   },
   {
     path: '/knowledge',
@@ -69,7 +69,7 @@ const guidedTourSteps: TourStep[] = [
     selector: '.mode-grid',
     eyebrow: 'Risk-based controls',
     title: 'Tune automation to institutional risk',
-    description: 'Operating mode, automation thresholds, QA rates, confidence gates, and release safeguards are explicit and scoped.',
+    description: 'Operating mode, automation thresholds, QA rates, confidence gates, and delivery safeguards are explicit and scoped.',
     businessValue: 'Administrators can increase oversight when risk changes without redesigning the workflow or losing the audit trail.',
   },
 ]

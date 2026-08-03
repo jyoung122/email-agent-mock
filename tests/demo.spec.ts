@@ -31,7 +31,7 @@ test('guided demo explains the cross-screen workflow and can restart', async ({ 
 
   for (const expectedTitle of [
     'Classify documents against configured forms',
-    'Release only after safeguards are satisfied',
+    'Deliver only after safeguards are satisfied',
     'Make approved guidance traceable',
     'Tune automation to institutional risk',
   ]) {
@@ -63,7 +63,7 @@ test('all primary routes render without browser errors', async ({ page }) => {
   const routes: Array<[string, string, string]> = [
     ['/', 'Program dashboard', 'Program Dashboard'],
     ['/work-queue', 'Work Queue', 'Work Queue'],
-    ['/release-queue', 'Release Queue', 'Release Queue'],
+    ['/release-queue', 'Delivery Queue', 'Delivery Queue'],
     ['/agent-controls', 'Agent Controls', 'Agent Controls'],
     ['/knowledge', 'Knowledge', 'Knowledge'],
     ['/reporting', 'Program reporting', 'Reporting'],
@@ -123,10 +123,10 @@ test('leadership transcript workflow completes and resets', async ({ page }) => 
   await reviewDialog.getByRole('button', { name: 'Close review' }).click()
   await expect(page.getByRole('dialog', { name: 'Attachment review' })).toBeHidden()
 
-  await page.getByRole('button', { name: 'Approve for release' }).click()
-  await expect(page.getByText('Approved for release and added to the Registrar batch.')).toBeVisible()
-  await page.getByRole('link', { name: /Release Queue/ }).click()
-  const registrarBatch = page.getByRole('row', { name: /Registrar · Aug 2 afternoon release/ })
+  await page.getByRole('button', { name: 'Approve for delivery' }).click()
+  await expect(page.getByText('Approved for delivery and added to the Registrar delivery batch.')).toBeVisible()
+  await page.getByRole('link', { name: /Delivery Queue/ }).click()
+  const registrarBatch = page.getByRole('row', { name: /Registrar · Aug 2 afternoon delivery/ })
   await expect(registrarBatch).toContainText('1')
 
   await page.getByRole('link', { name: 'Knowledge' }).click()
@@ -137,18 +137,18 @@ test('leadership transcript workflow completes and resets', async ({ page }) => 
 
   await page.getByRole('link', { name: /Agent Controls/ }).click()
   await expect(page.getByText('Current mode: Knowledge Change')).toBeVisible()
-  await page.getByRole('link', { name: /Release Queue/ }).click()
-  await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon release/ })).toContainText('100%')
-  await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon release/ })).toContainText('Held')
+  await page.getByRole('link', { name: /Delivery Queue/ }).click()
+  await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon delivery/ })).toContainText('100%')
+  await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon delivery/ })).toContainText('Held')
 
   await page.getByRole('button', { name: 'Reset Demo' }).click()
   const resetDialog = page.getByRole('dialog', { name: 'Reset demonstration?' })
   await resetDialog.getByRole('button', { name: 'Reset Demo' }).click()
-  await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon release/ })).toContainText('20%')
-  await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon release/ })).toContainText('Scheduled')
+  await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon delivery/ })).toContainText('20%')
+  await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon delivery/ })).toContainText('Scheduled')
 })
 
-test('queue filtering and simulated batch release work', async ({ page }) => {
+test('queue filtering and simulated batch delivery work', async ({ page }) => {
   await page.goto('/work-queue')
   await dismissWelcome(page)
   await page.getByPlaceholder('Search sender, subject, mailbox…').fill('Quinn Brooks')
@@ -157,11 +157,11 @@ test('queue filtering and simulated batch release work', async ({ page }) => {
   await page.getByPlaceholder('Search sender, subject, mailbox…').fill('')
 
   await page.getByRole('row', { name: 'Open Transcript request for graduate application from Alex Harper' }).click()
-  await page.getByRole('button', { name: 'Approve for release' }).click()
-  await page.getByRole('link', { name: /Release Queue/ }).click()
-  await page.getByRole('button', { name: 'Release approved' }).click()
-  await page.getByRole('dialog', { name: 'Release approved responses?' }).getByRole('button', { name: 'Release 1 response' }).click()
-  await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon release/ })).toContainText('Released')
+  await page.getByRole('button', { name: 'Approve for delivery' }).click()
+  await page.getByRole('link', { name: /Delivery Queue/ }).click()
+  await page.getByRole('button', { name: 'Send approved' }).click()
+  await page.getByRole('dialog', { name: 'Send approved responses?' }).getByRole('button', { name: 'Send 1 response' }).click()
+  await expect(page.getByRole('row', { name: /Registrar · Aug 2 afternoon delivery/ })).toContainText('Delivered')
 
   await page.getByRole('button', { name: 'Reset Demo' }).click()
   await page.getByRole('dialog', { name: 'Reset demonstration?' }).getByRole('button', { name: 'Reset Demo' }).click()

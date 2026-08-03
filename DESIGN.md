@@ -75,7 +75,7 @@ Use these labels and Lucide icons:
 | --- | --- | --- |
 | `/` | Program Dashboard | `LayoutDashboard` |
 | `/work-queue` | Work Queue | `Inbox` |
-| `/release-queue` | Release Queue | `Send` |
+| `/release-queue` | Delivery Queue | `Send` |
 | `/agent-controls` | Agent Controls | `SlidersHorizontal` |
 | `/knowledge` | Knowledge | `BookOpen` |
 | `/reporting` | Reporting | `ChartNoAxesCombined` |
@@ -86,7 +86,7 @@ The active item uses a 3px blue left indicator, pale-blue fill, blue icon, and s
 Show compact navigation counters only when meaningful:
 
 - Work Queue: total items currently requiring attention
-- Release Queue: ready-to-release count
+- Delivery Queue: ready-for-delivery count
 
 ## Visual system
 
@@ -163,7 +163,7 @@ Badges are compact text labels with subtle background and a 1px tonal border.
 - Blue/info: New, Classified, Draft Ready
 - Amber/review: QA Required, Form Review Required, Missing Information, Staged
 - Purple/specialist: Specialist Review, Escalated
-- Green/success: Approved, Released, Valid, Grounded
+- Green/success: Approved, Delivered, Valid, Grounded
 - Red/blocked: Held, Invalid, Emergency Hold
 - Gray/inactive: Superseded, Expired, Paused
 
@@ -173,7 +173,7 @@ Risk is always shown as `Low risk`, `Medium risk`, or `High risk`, not a color d
 
 - Inline alert: persistent explanation attached to the affected content.
 - Toast: confirmation of a completed local action; auto-dismiss after about five seconds and remain screen-reader announced.
-- Confirmation dialog: required for releasing a batch, pausing all releases, emergency hold, reset, and continuing after a known policy conflict.
+- Confirmation dialog: required for sending a delivery batch, pausing all delivery, emergency hold, reset, and continuing after a known policy conflict.
 - Avoid browser-native `alert`, `confirm`, and `prompt` in the finished prototype.
 
 ### First-visit welcome and route-specific onboarding
@@ -182,9 +182,9 @@ Risk is always shown as `Low risk`, `Medium risk`, or `High risk`, not a color d
 
 Show a one-time welcome modal after the shell first renders. It is the short orientation before route-specific help, not a tutorial tour or a blocker to navigation. Use the title **Welcome to SSI Correspondence** and structure the content as four compact sections:
 
-- **The operational problem:** high-volume institutional correspondence and document intake require consistent service without losing human control, policy traceability, or release safeguards.
-- **What this demo shows:** queue triage, evidence-grounded response drafts, attachment/form validation, random QA, controlled release, and policy-impact governance.
-- **Recommended walkthrough:** `Program Dashboard → Work Queue → Transcript Response Workbench → Attachment Review → Release Queue → Agent Controls → Knowledge`.
+- **The operational problem:** high-volume institutional correspondence and document intake require consistent service without losing human control, policy traceability, or delivery safeguards.
+- **What this demo shows:** queue triage, evidence-grounded response drafts, attachment/form validation, random QA, controlled simulated outbound email delivery, and policy-impact governance.
+- **Recommended walkthrough:** `Program Dashboard → Work Queue → Transcript Response Workbench → Attachment Review → Delivery Queue → Agent Controls → Knowledge`.
 - **Demonstration boundary:** all records and actions are fictional, predefined, and local to this browser; no email is sent and no live student data, integrations, or AI model are used.
 
 The footer has one primary dismissal action, `Start guided demo`, and a short line directing users to **About this screen** beside Reset Demo for help on any later route. The modal must be keyboard accessible and follow the standard dialog focus treatment. Store dismissal with a dedicated versioned `localStorage` key (`ssi-correspondence-welcome-dismissed-v1`); do not show it again after dismissal, including when Reset Demo restores fictional workflow state.
@@ -198,8 +198,8 @@ The footer has one primary dismissal action, `Start guided demo`, and a short li
 | Program Dashboard | Network health, automation, QA, backlog, and knowledge-change signals; gives leaders one operational view. | Replaces fragmented status reporting; add trend comparisons and scheduled exports. |
 | Work Queue | Filterable correspondence triage with email, request, and attachment state; directs staff attention. | Replaces shared-inbox ambiguity; add saved views, SLA cues, and bulk triage. |
 | Response Workbench | Original message, predefined draft, evidence, refinements, and audit trail; enables controlled reviewer decisions. | Reduces manual drafting without obscuring oversight; add collaboration and richer escalation routing. |
-| Release Queue | Locked batch populations, QA progression, holds, and scheduled release controls; makes release governance explicit. | Prevents opaque or premature sending; add approval chains and release windows. |
-| Agent Controls | Scoped automation, QA, release, and response policy settings; demonstrates scalable human control. | Replaces inconsistent mailbox-by-mailbox rules; add policy simulation, versions, and approval workflow. |
+| Delivery Queue | Locked batch populations, QA progression, holds, and scheduled delivery controls; makes delivery governance explicit. | Prevents opaque or premature sending; add approval chains and delivery windows. |
+| Agent Controls | Scoped automation, QA, delivery, and response policy settings; demonstrates scalable human control. | Replaces inconsistent mailbox-by-mailbox rules; add policy simulation, versions, and approval workflow. |
 | Knowledge | Approved policy catalog, ownership, versions, and impact handling; protects response consistency. | Makes stale policy use visible; add authoring, diffs, and review-cycle reminders. |
 | Reporting | Leadership measures, performance comparisons, and knowledge gaps; demonstrates measurable value. | Reduces manual impact reporting; add scheduled exports and richer period comparisons. |
 | Administration | Fictional configuration tables, including the configured form taxonomy; shows controlled setup without code. | Replaces scattered configuration; add provisioning, role management, and import workflows. |
@@ -208,7 +208,7 @@ The attachment-review modal also offers its own concise `About this review` expl
 
 ### Guided demo tour
 
-Expose a persistent `Start guided demo` entry point for the leadership narrative. It launches a restartable spotlight tour that does not change any local demo state or invoke operational controls. The exact sequence is: Program Dashboard → Work Queue → Registrar transcript Response Workbench → transcript attachment intake → Release Queue → Knowledge → Agent Controls.
+Expose a persistent `Start guided demo` entry point for the leadership narrative. It launches a restartable spotlight tour that does not change any local demo state or invoke operational controls. The exact sequence is: Program Dashboard → Work Queue → Registrar transcript Response Workbench → transcript attachment intake → Delivery Queue → Knowledge → Agent Controls.
 
 At every step, navigate to the needed route or attachment-review context, place a visible spotlight around the relevant target, and use concise business-value copy. The tour panel shows `Step n of n` plus `Back`, `Next`, and `Exit`; starting it again always restarts at Dashboard. All tour controls and route changes are keyboard operable, focus enters the current tour panel, and focus returns to the invoking control on exit. If the expected target is missing or cannot be positioned, show a visible fallback explaining that the screen is still available and offer `Continue`; never auto-run a state-changing action to make a target appear.
 
@@ -231,7 +231,7 @@ At every step, navigate to the needed route or attachment-review context, place 
 ### Drawers and dialogs
 
 - Use dialogs for focused create/edit configuration tasks.
-- Use a right drawer for secondary detail that benefits from preserving table context, such as release-batch membership or knowledge article metadata.
+- Use a right drawer for secondary detail that benefits from preserving table context, such as delivery-batch membership or knowledge article metadata.
 - Do not use a drawer for the primary Response Workbench; it has its own route.
 
 ## Screen designs
@@ -271,20 +271,21 @@ Specific details:
 - The attachment card shows filename, file type, extraction state, and `Open form review`.
 - For multiple attachments, use one compact row per artifact. Show a file icon/preview, filename, physical format, predicted document type, classification confidence, matched form version, and validation/review state.
 - Keep request classification and attachment classification visually distinct. The former describes the email's intent; the latter identifies each incoming document against the configured form catalog.
-- The draft editor resembles an email composition surface, not a chat bubble. Show To, Subject, tone profile, version, and scheduled release metadata.
-- Primary action: `Approve for release`. Secondary actions: Save draft, Hold. Reject, Transfer, and Escalate belong in `More actions` unless screen width permits.
+- The draft editor resembles an email composition surface, not a chat bubble. Show To, Subject, tone profile, version, and scheduled delivery metadata.
+- Primary action: `Approve for delivery`. Secondary actions: Save draft, Hold. Reject, Transfer, and Escalate belong in `More actions` unless screen width permits.
 - Refinement buttons are quiet bordered controls. Applying one updates the static draft, increments the version, and records a timeline event.
 - Knowledge sources show article title, version, approval state, and the exact response element supported.
 - Confidence uses a labeled value such as `Grounding confidence 94% · High`, plus a simple bar.
 
-### Release Queue
+### Delivery Queue
 
-- Top operational banner shows release state, next release time, and whether automated release is paused.
-- Release batches display as a compact table. Selecting a batch opens an inline detail region or right drawer with batch membership and audit events.
-- The batch detail header contains Hold/Resume, Change time, Run random QA, Set QA to 100%, and Release approved actions with clear permission hierarchy.
-- Counts form a single progression: Population → Mandatory → Randomly selected → Approved → Held → Ready.
+- This is a simulated outbound email delivery queue, not a software release process.
+- Top operational banner shows delivery state, next delivery time, and whether automated delivery is paused.
+- Delivery batches display as a compact table. Selecting a batch opens an inline detail region or right drawer with batch membership and audit events.
+- The batch detail header contains Hold/Resume, Change time, Run random QA, Set QA to 100%, and `Send approved responses` actions with clear permission hierarchy.
+- Counts form a single progression: Population → Mandatory → Randomly selected → Approved → Held → Ready for delivery.
 - Include the required random-selection explanation in an info tooltip adjacent to `Run random QA`.
-- Releasing uses a confirmation dialog summarizing exactly how many responses will change to Released.
+- Sending uses a confirmation dialog summarizing exactly how many responses will change to Delivered.
 
 ### Attachment Review modal
 
@@ -304,7 +305,7 @@ Specific details:
 
 - Start with a scope bar: Institution → Department → Mailbox → Request type. Always show which scope inherits or overrides policy.
 - Place current mode in a prominent but restrained banner with explanatory text.
-- Use three sections: Automation and QA, Release safeguards, Response standards.
+- Use three sections: Automation and QA, Delivery safeguards, Response standards.
 - Percentage controls combine a labeled range input with an exact numeric input; values update a nearby policy summary immediately.
 - Operating modes appear as a segmented group or selectable list with descriptions. Emergency Hold requires confirmation.
 - A sticky right summary on wide screens shows the Registrar sample configuration, affected staged drafts, and unsaved changes.
@@ -315,13 +316,13 @@ Specific details:
 - Use a governance table with search, department/status filters, and affected-draft counts.
 - Opening an article shows metadata, current approved language, version history, and impacted drafts in a right drawer.
 - The fictional transcript policy exposes a primary `Mark policy changed` action.
-- After a change, show a focused impact dialog with the affected count and four explicit choices: Revalidate drafts, Increase QA to 100%, Hold release batch, Continue with current settings.
-- Treat the choice as an operational decision: explain the effect before confirmation, then update Agent Controls and Release Queue.
+- After a change, show a focused impact dialog with the affected count and four explicit choices: Revalidate drafts, Increase QA to 100%, Hold delivery batch, Continue with current settings.
+- Treat the choice as an operational decision: explain the effect before confirmation, then update Agent Controls and Delivery Queue.
 
 ### Reporting
 
 - Begin with a reporting period and scope selector.
-- Use a concise executive-summary band for Staff hours saved, Response-time reduction, Headless release rate, QA pass rate, and Forms normalized.
+- Use a concise executive-summary band for Staff hours saved, Response-time reduction, Headless delivery rate, QA pass rate, and Forms normalized.
 - Follow with performance-by-school and performance-by-department comparisons, then knowledge gaps.
 - Every percentage chart must expose numerator/denominator or exact values in adjacent text/table content.
 - `Export report` is simulated and should produce visible confirmation, not a dead button.
@@ -343,10 +344,10 @@ The happy-path presentation should take about five minutes:
 2. Open Work Queue and select the Registrar transcript request.
 3. In Workbench, explain the random-QA reason, grounding evidence, and missing-signature warning.
 4. Open the transcript PDF's attachment-review modal, select the signature field, and request resubmission or correct/approve a field.
-5. Return to Workbench, apply `Make warmer`, then approve for release.
-6. Open Release Queue and show the staged response and locked-population sampling logic.
+5. Return to Workbench, apply `Make warmer`, then approve for delivery.
+6. Open Delivery Queue and show the staged response and locked-population sampling logic.
 7. Open Knowledge, mark the transcript policy changed, and select `Increase QA to 100%` plus hold affected drafts.
-8. Return to Agent Controls or Release Queue to show the policy and held-state propagation.
+8. Return to Agent Controls or Delivery Queue to show the policy and held-state propagation.
 9. Use Reset Demo to restore the original narrative.
 
 Preserve the user's place: closing Attachment Review returns to its originating Work Queue request or Response Workbench with the selected attachment context intact, and returning from a record retains queue filters.
@@ -355,7 +356,7 @@ Preserve the user's place: closing Attachment Review returns to its originating 
 
 - Use 120–180ms transitions for hover, focus, disclosure, and drawer movement.
 - Respect `prefers-reduced-motion`.
-- Because all data is local, do not invent long loading experiences. A brief button busy state is acceptable for simulated release or QA actions when it clarifies the state transition.
+- Because all data is local, do not invent long loading experiences. A brief button busy state is acceptable for simulated delivery or QA actions when it clarifies the state transition.
 - Avoid animated counters, decorative parallax, pulsing AI effects, and auto-advancing content.
 
 ## Accessibility acceptance
@@ -370,7 +371,7 @@ Preserve the user's place: closing Attachment Review returns to its originating 
 
 ## Content conventions
 
-- Prefer explicit operational copy: `Approve for release`, `Hold 8 affected drafts`, `QA sample set to 100%`.
+- Prefer explicit operational copy: `Approve for delivery`, `Hold 8 affected drafts`, `QA sample set to 100%`.
 - Avoid vague labels such as `Submit`, `Process`, `AI result`, or `Fix` when a precise action is available.
 - Dates display as `Aug 2, 2026`; times display as `4:00 PM ET`. Full timestamps may appear in audit history.
 - Percentages use whole numbers unless a decimal is meaningful. Confidence always includes a qualitative label.

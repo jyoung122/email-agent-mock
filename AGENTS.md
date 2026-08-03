@@ -29,7 +29,7 @@ This is a short-lived, Figma-like interactive mockup expected to be discarded af
 
 - This is a frontend-only demonstration built with Vite, React, TypeScript, React Router, Lucide React, and Tailwind CSS or structured CSS modules.
 - Do not add a backend, database, authentication, Microsoft Graph, Azure services, external APIs, real AI/LLM calls, or other live integrations.
-- All records, AI results, knowledge grounding, form extraction, QA decisions, and releases are simulated locally.
+- All records, AI results, knowledge grounding, form extraction, QA decisions, and outbound email deliveries are simulated locally. Customer-facing delivery language never refers to a software release.
 - Never use the names or identifying details of real schools, students, staff, addresses, email accounts, or student IDs. All visible content must be clearly fictional.
 - Keep the persistent label `Demonstration Environment — Fictional Data` visible in the application shell.
 - Do not expand the product beyond the PRD until the core transcript-request workflow is complete.
@@ -84,7 +84,7 @@ Implement in this order when the repository is incomplete:
 
 1. Application shell, routing, selectors, demo banner, and reset behavior.
 2. Static mock-data model and shared demo-state layer.
-3. The end-to-end Registrar transcript workflow across Work Queue, Response Workbench, the attachment-review modal, Release Queue, Agent Controls, and Knowledge.
+3. The end-to-end Registrar transcript workflow across Work Queue, Response Workbench, the attachment-review modal, Delivery Queue, Agent Controls, and Knowledge.
 4. Remaining required interactions on those screens.
 5. Program Dashboard, Reporting, and Administration depth.
 6. Accessibility, responsive refinement, consistency checks, and final polish.
@@ -100,11 +100,11 @@ Apply the guiding principle above when implementing this sequence. Favor a compl
 - Use the shell name `SSI Correspondence` with descriptor `Operations Console` and the persistent fictional-data environment label.
 - Use the specified system-font typography, semantic color tokens, spacing, borders, radii, table density, badge mappings, and responsive breakpoints.
 - Use the shell dimensions and compositions in `DESIGN.md` as target values. Small adjustments are acceptable when verified at real viewport sizes, but preserve the intended hierarchy.
-- Keep one primary action per region and use precise operational labels such as `Approve for release`, `Run random QA`, and `Hold affected drafts`.
+- Keep one primary action per region and use precise operational labels such as `Approve for delivery`, `Run random QA`, and `Hold affected drafts`.
 - Use dialogs, drawers, toasts, and inline alerts for the purposes assigned in `DESIGN.md`. Do not use browser-native `alert`, `confirm`, or `prompt` in the finished prototype.
 - Implement the first-visit welcome modal specified in `prd.md` and `DESIGN.md`. It explains the business problem, simulated capabilities, recommended walkthrough, and fictional/local-data boundary, then points to `About this screen` for later help. Persist only its dismissal under the dedicated versioned key `ssi-correspondence-welcome-dismissed-v1`; this UI preference is separate from demo workflow state and must not be reset by Reset Demo.
 - Keep the persistent `About this screen` button immediately beside `Reset Demo` in the application header. It opens an accessible, route-specific informational modal with the four labeled sections `What exists`, `Business case`, `Pain solved`, and `Possible additions`; it must never alter demo state. Use the route-specific content map in `DESIGN.md`, including the attachment-review explanation of configured-form ground truth.
-- Provide the `Start guided demo` spotlight tour specified in `prd.md` and `DESIGN.md`. It must be restartable, keyboard accessible, and strictly non-mutating: navigation and highlighting are allowed, but it may not auto-approve, refine, classify, release, change policies, or otherwise alter demo state. Include progress, `Back`/`Next`/`Exit`, the specified core-route sequence, business-value copy, focus management, and a visible `Continue` fallback whenever a target is unavailable.
+- Provide the `Start guided demo` spotlight tour specified in `prd.md` and `DESIGN.md`. It must be restartable, keyboard accessible, and strictly non-mutating: navigation and highlighting are allowed, but it may not auto-approve, refine, classify, send, change policies, or otherwise alter demo state. Include progress, `Back`/`Next`/`Exit`, the specified core-route sequence, business-value copy, focus management, and a visible `Continue` fallback whenever a target is unavailable.
 - Preserve queue filters when navigating to and from a workbench. Attachment Review is a modal launched from the originating Work Queue request or Response Workbench; preserve that origin and selected attachment when it closes.
 - Optimize first for a 1366×768 laptop while remaining polished on wider screens. Required actions may not disappear at smaller widths.
 - Treat the five-minute leadership-demo narrative in `DESIGN.md` as a critical acceptance path alongside the PRD workflow.
@@ -117,13 +117,13 @@ Preserve one stable primary scenario throughout the data and UI:
 2. The request is classified as a transcript request; each attachment is independently classified against configured form definitions.
 3. The PDF matches Official Transcript Authorization version 2026.1, while the image demonstrates an unmatched/supporting artifact.
 4. Form extraction uses the matched configured schema, detects a missing signature, and exposes the related warning and source field.
-5. The response is staged for scheduled release and is selected by random QA sampling.
+5. The response is staged for scheduled delivery and is selected by random QA sampling.
 6. The workbench states: `Selected for review through random QA sampling`.
 7. A reviewer can edit the draft or apply every predefined refinement action.
-8. Approval moves the response into the release queue.
+8. Approval moves the response into the Delivery Queue.
 9. Changing the transcript policy can set QA to 100% and hold affected staged drafts.
 
-State changes must be reflected everywhere they matter. For example, approving a draft updates the workbench, work queue, audit history, and release queue rather than changing only the currently visible component.
+State changes must be reflected everywhere they matter. For example, approving a draft updates the workbench, work queue, audit history, and Delivery Queue rather than changing only the currently visible component.
 
 ## Architecture and code organization
 
@@ -150,7 +150,7 @@ src/
 - Keep route-level screens in `src/pages` and reusable UI in `src/components`.
 - Keep mock business rules and state transitions out of presentation components.
 - Use React Context or a genuinely lightweight local store; do not add a complex state-management dependency.
-- Maintain a single shared demo-state source for emails, drafts, forms, policies, knowledge, release batches, and audit events.
+- Maintain a single shared demo-state source for emails, drafts, forms, policies, knowledge, delivery batches, and audit events. Internal `release*` implementation identifiers and types may remain to avoid unnecessary churn.
 - Treat source mock data as immutable. Reset by rebuilding state from the original static dataset, and clear any persisted demo-state key.
 - `localStorage` persistence is optional. If used, version the storage key and fail safely when stored data is absent or invalid.
 - Use stable, human-readable IDs and ID references between related records. Do not join records by display text.
@@ -163,9 +163,9 @@ src/
 ## TypeScript and data rules
 
 - Enable strict TypeScript and do not use `any`.
-- Define domain interfaces/types for the entities listed in the PRD, including institutions, departments, mailboxes, users, emails/threads, attachments, document assessments, configured form definitions/versions, extraction instances/fields, drafts, knowledge sources, release batches, QA policies, and audit events.
+- Define domain interfaces/types for the entities listed in the PRD, including institutions, departments, mailboxes, users, emails/threads, attachments, document assessments, configured form definitions/versions, extraction instances/fields, drafts, knowledge sources, delivery batches, QA policies, and audit events. Internal `ReleaseBatch`/`release*` identifiers may remain implementation details.
 - Store the canonical fixture records under `src/data` as static JSON where practical, with TypeScript types and validated assumptions at the import boundary. Typed fixture modules are acceptable when they materially improve correctness.
-- Seed approximately the quantities required by the PRD: 4 institutions, 5 departments, 8 mailboxes, 20–25 emails, 8–12 knowledge articles, 4 forms, 3 release batches, and 6 users.
+- Seed approximately the quantities required by the PRD: 4 institutions, 5 departments, 8 mailboxes, 20–25 emails, 8–12 knowledge articles, 4 forms, 3 delivery batches, and 6 users.
 - Include the representative states and edge cases specified by the PRD. Keep dashboard, queue, reporting, and batch figures internally consistent.
 - Use predefined text variants for simulated AI refinements. Never generate response content dynamically or imply that a live model ran.
 - Use deterministic predefined results for classification, grounding, extraction, and knowledge impact. JavaScript randomness is allowed only for the explicitly simulated random-QA selection.
@@ -173,12 +173,12 @@ src/
 ## State-transition invariants
 
 - Mandatory-review rules are applied before random sampling.
-- Random sampling runs only after a release population is locked and samples the configured percentage from the remaining eligible drafts.
+- Random sampling runs only after a delivery population is locked and samples the configured percentage from the remaining eligible drafts.
 - The UI must make clear that the agent does not select QA messages.
-- Record consequential actions as audit events, including refinements, edits/saves, form corrections, approvals, holds, transfers, escalations, policy changes, sampling, and releases.
-- Approving the main draft makes it eligible for or adds it to the appropriate release batch.
-- Holding, resuming, releasing, changing release time, pausing releases, and setting 100% QA must update shared state and visible batch counts.
-- A transcript knowledge change must identify affected staged drafts and support revalidation, 100% QA, batch hold, or continuing with current settings. The chosen response must propagate to Agent Controls and Release Queue.
+- Record consequential actions as audit events, including refinements, edits/saves, form corrections, approvals, holds, transfers, escalations, policy changes, sampling, and simulated outbound email delivery.
+- Approving the main draft makes it eligible for or adds it to the appropriate delivery batch.
+- Holding, resuming, sending, changing delivery time, pausing delivery, and setting 100% QA must update shared state and visible batch counts.
+- A transcript knowledge change must identify affected staged drafts and support revalidation, 100% QA, batch hold, or continuing with current settings. The chosen response must propagate to Agent Controls and Delivery Queue.
 - Form-field selection highlights the matching form region. Corrections update value, validation status, confidence where appropriate, and review/audit state.
 - Do not conflate an incoming attachment, configured form definition, and extracted-form instance. Attachments link to independent document assessments; matched assessments link to the configured form/version used by their extraction instance.
 - Classification correction or confirmation must update visible attachment state and create an audit event. Unmatched documents can remain supporting material without fabricated extraction fields.
@@ -190,13 +190,13 @@ The persistent left navigation must expose:
 
 - Program Dashboard
 - Work Queue
-- Release Queue
+- Delivery Queue
 - Agent Controls
 - Knowledge
 - Reporting
 - Administration
 
-The implementation is not complete unless the PRD's required controls are functional, including queue filters; opening an email and attachment-review modal; editing, refining, approving, rejecting, holding, transferring, and escalating drafts; correcting and approving extracted forms; changing automation and QA settings; pausing releases; running random QA; changing knowledge; holding affected drafts; releasing a batch; and resetting the demo.
+The implementation is not complete unless the PRD's required controls are functional, including queue filters; opening an email and attachment-review modal; editing, refining, approving, rejecting, holding, transferring, and escalating drafts; correcting and approving extracted forms; changing automation and QA settings; pausing delivery; running random QA; changing knowledge; holding affected drafts; sending a delivery batch; and resetting the demo.
 
 Buttons that appear enabled must do something visible. For intentionally simulated actions, update local state and provide clear feedback rather than leaving dead controls.
 

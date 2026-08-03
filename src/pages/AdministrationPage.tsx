@@ -2,12 +2,12 @@ import { Check, Pencil, Plus, Search, ShieldCheck, X } from 'lucide-react'
 import { FormEvent, useMemo, useState } from 'react'
 import './leadership-pages.css'
 
-type Category = 'Institutions' | 'Departments' | 'Mailboxes' | 'Users' | 'Roles' | 'Knowledge sources' | 'Form types' | 'Canonical fields' | 'Routing rules' | 'Escalation rules' | 'Release schedules' | 'QA policies' | 'Tone profiles' | 'Retention settings'
+type Category = 'Institutions' | 'Departments' | 'Mailboxes' | 'Users' | 'Roles' | 'Knowledge sources' | 'Form types' | 'Canonical fields' | 'Routing rules' | 'Escalation rules' | 'Delivery schedules' | 'QA policies' | 'Tone profiles' | 'Retention settings'
 type AdminRecord = { id: string; name: string; detail: string; status: string; updated: string }
 type FormDefinition = { id: string; name: string; category: string; version: string; acceptedTypes: string; requiredFields: string; classificationThreshold: string; extractionThreshold: string; status: string; updated: string }
 type CanonicalField = { id: string; key: string; label: string; dataType: string; validation: string; usedBy: string; usage: string; status: string; updated: string }
 
-const categories: Category[] = ['Institutions', 'Departments', 'Mailboxes', 'Users', 'Roles', 'Knowledge sources', 'Form types', 'Canonical fields', 'Routing rules', 'Escalation rules', 'Release schedules', 'QA policies', 'Tone profiles', 'Retention settings']
+const categories: Category[] = ['Institutions', 'Departments', 'Mailboxes', 'Users', 'Roles', 'Knowledge sources', 'Form types', 'Canonical fields', 'Routing rules', 'Escalation rules', 'Delivery schedules', 'QA policies', 'Tone profiles', 'Retention settings']
 const formDefinitions: FormDefinition[] = [
   { id: 'form-definition-transcript-auth', name: 'Official Transcript Authorization', category: 'Registrar authorization', version: 'v2026.1', acceptedTypes: 'PDF, JPG, PNG', requiredFields: 'Full name · Student ID · Request type · Recipient · Delivery · Copy count · Signature · Signature date', classificationThreshold: '≥ 90%', extractionThreshold: '≥ 88%', status: 'Active', updated: 'Aug 2, 2026' },
   { id: 'form-definition-aid-verification', name: 'Financial Aid Verification', category: 'Financial aid verification', version: 'v2026.2', acceptedTypes: 'PDF, JPG, PNG', requiredFields: 'Full name · Student ID · Attestation', classificationThreshold: '≥ 88%', extractionThreshold: '≥ 84%', status: 'Active', updated: 'Aug 2, 2026' },
@@ -19,7 +19,7 @@ const canonicalFields: CanonicalField[] = [
   { id: 'FIELD-02', key: 'student_identifier', label: 'Student identifier', dataType: 'String', validation: 'Institution student ID pattern', usedBy: 'Transcript · Aid', usage: 'Record matching · routing', status: 'Required', updated: 'Jul 24, 2026' },
   { id: 'FIELD-03', key: 'request_type', label: 'Request type', dataType: 'Enum', validation: 'Official transcript', usedBy: 'Transcript', usage: 'Classification · queue routing', status: 'Required', updated: 'Jul 22, 2026' },
   { id: 'FIELD-04', key: 'delivery_recipient', label: 'Delivery recipient', dataType: 'String', validation: 'Required text', usedBy: 'Transcript', usage: 'Draft composition · form review', status: 'Required', updated: 'Jul 22, 2026' },
-  { id: 'FIELD-05', key: 'delivery_method', label: 'Delivery method', dataType: 'Enum', validation: 'Approved delivery method', usedBy: 'Transcript', usage: 'Release safeguards', status: 'Required', updated: 'Jul 22, 2026' },
+  { id: 'FIELD-05', key: 'delivery_method', label: 'Delivery method', dataType: 'Enum', validation: 'Approved delivery method', usedBy: 'Transcript', usage: 'Delivery safeguards', status: 'Required', updated: 'Jul 22, 2026' },
   { id: 'FIELD-06', key: 'copy_count', label: 'Copy count', dataType: 'Integer', validation: 'Between 1 and 10', usedBy: 'Transcript', usage: 'Transcript fulfillment', status: 'Required', updated: 'Aug 2, 2026' },
   { id: 'FIELD-07', key: 'authorization_signature', label: 'Authorization signature', dataType: 'Boolean', validation: 'Signed acknowledgement required', usedBy: 'Transcript', usage: 'Mandatory review rule', status: 'Required', updated: 'Aug 2, 2026' },
   { id: 'FIELD-08', key: 'signature_date', label: 'Signature date', dataType: 'Date', validation: 'Required when signed', usedBy: 'Transcript', usage: 'Form validation', status: 'Required', updated: 'Aug 2, 2026' },
@@ -41,7 +41,7 @@ const seed: Record<Category, AdminRecord[]> = {
   'Form types': [], 'Canonical fields': [],
   'Routing rules': [{ id: 'ROUTE-01', name: 'Transcript request routing', detail: 'Registrar mailbox → transcript queue', status: 'Enabled', updated: 'Aug 2, 2026' }, { id: 'ROUTE-02', name: 'High-risk financial aid', detail: 'Route to mandatory review', status: 'Enabled', updated: 'Jul 29, 2026' }],
   'Escalation rules': [{ id: 'ESC-01', name: 'Missing identity evidence', detail: 'Escalate to department specialist', status: 'Enabled', updated: 'Jul 25, 2026' }, { id: 'ESC-02', name: 'Potential records privacy issue', detail: 'Escalate immediately', status: 'Enabled', updated: 'Jul 25, 2026' }],
-  'Release schedules': [{ id: 'REL-01', name: 'Registrar afternoon release', detail: '4:00 PM ET · weekdays', status: 'Active', updated: 'Aug 2, 2026' }, { id: 'REL-02', name: 'Admissions daily release', detail: '3:30 PM ET · weekdays', status: 'Active', updated: 'Jul 29, 2026' }],
+  'Delivery schedules': [{ id: 'REL-01', name: 'Registrar afternoon delivery', detail: '4:00 PM ET · weekdays', status: 'Active', updated: 'Aug 2, 2026' }, { id: 'REL-02', name: 'Admissions daily delivery', detail: '3:30 PM ET · weekdays', status: 'Active', updated: 'Jul 29, 2026' }],
   'QA policies': [{ id: 'QA-01', name: 'Registrar baseline QA', detail: '20% random · 100% high risk', status: 'Active', updated: 'Aug 2, 2026' }, { id: 'QA-02', name: 'Knowledge change safeguard', detail: '100% review on affected drafts', status: 'Available', updated: 'Aug 2, 2026' }],
   'Tone profiles': [{ id: 'TONE-01', name: 'Clear and supportive', detail: 'Default student-facing profile', status: 'Active', updated: 'Jul 28, 2026' }, { id: 'TONE-02', name: 'Formal policy notice', detail: 'Compliance communications', status: 'Active', updated: 'Jul 28, 2026' }],
   'Retention settings': [{ id: 'RET-01', name: 'Correspondence audit history', detail: 'Retain for 365 simulated days', status: 'Active', updated: 'Jul 31, 2026' }, { id: 'RET-02', name: 'Form extraction records', detail: 'Retain for 180 simulated days', status: 'Active', updated: 'Jul 31, 2026' }],

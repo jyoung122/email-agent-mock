@@ -6,7 +6,7 @@ export type BadgeTone = 'info' | 'review' | 'specialist' | 'success' | 'danger' 
 
 const badgeToneFor = (label: string): BadgeTone => {
   const value = label.toLowerCase()
-  if (['approved', 'released', 'valid', 'grounded'].includes(value)) return 'success'
+  if (['approved', 'released', 'delivered', 'valid', 'grounded'].includes(value)) return 'success'
   if (['held', 'invalid', 'emergency hold'].includes(value)) return 'danger'
   if (['specialist review', 'escalated'].includes(value)) return 'specialist'
   if (['qa required', 'form review required', 'missing information', 'staged'].includes(value)) return 'review'

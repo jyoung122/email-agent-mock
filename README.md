@@ -1,6 +1,6 @@
 # SSI Correspondence interactive demo
 
-A polished, clickable frontend mockup for a fictional higher-education correspondence and document-intake operations console. It demonstrates controlled automation, attachment classification against configured form definitions, canonical extraction, human QA, knowledge governance, and scheduled release workflows for leadership conversations.
+A polished, clickable frontend mockup for a fictional higher-education correspondence and document-intake operations console. It demonstrates controlled automation, attachment classification against configured form definitions, canonical extraction, human QA, knowledge governance, and scheduled delivery workflows for leadership conversations.
 
 This repository is intentionally a short-lived demonstration. It contains no backend, authentication, live AI, Microsoft integration, external API, real institution, or real personal data.
 
@@ -46,13 +46,13 @@ Pushes to `main` deploy the production build to GitHub Pages. The Pages build se
 2. Review its random-QA reason, grounding sources, and two independently assessed attachments.
 3. From the request or Response Workbench attachment list, open the PDF in the attachment-review modal; confirm its configured Official Transcript Authorization match, inspect canonical fields, and correct or request resubmission for the missing signature.
 4. Within that modal, switch to the supporting image to demonstrate an unmatched/unstructured attachment and its classification options.
-5. Return to the workbench, apply a predefined refinement, and approve the response for release.
-6. Open **Release Queue** to see the approved response in the locked Registrar batch.
+5. Return to the workbench, apply a predefined refinement, and approve the response for delivery.
+6. Open **Delivery Queue** to see the approved response in the locked Registrar batch.
 7. Open **Knowledge**, mark the transcript policy changed, and increase QA to 100% to hold affected drafts.
-8. Confirm the mode and held state in **Agent Controls** and **Release Queue**.
+8. Confirm the mode and held state in **Agent Controls** and **Delivery Queue**.
 9. Select **Reset Demo** to restore the original fixture state.
 
-All classifications, draft variants, extraction results, knowledge impacts, and releases are simulated locally. Random QA uses JavaScript randomization only after the batch population is locked.
+All classifications, draft variants, extraction results, knowledge impacts, and deliveries are simulated locally. Random QA uses JavaScript randomization only after the batch population is locked.
 
 ## Project structure
 
@@ -71,4 +71,4 @@ src/
 
 ## Resetting state
 
-Use **Reset Demo** in the persistent header. It discards all local simulated edits, approvals, holds, form decisions, policy changes, and release actions, then recreates state from the original fixtures.
+Use **Reset Demo** in the persistent header. It discards all local simulated edits, approvals, holds, form decisions, policy changes, and delivery actions, then recreates state from the original fixtures.

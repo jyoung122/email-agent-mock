@@ -94,7 +94,7 @@ export default function DashboardPage() {
       <div className="leadership-grid lower-grid">
         <section className="leadership-panel table-panel">
           <div className="panel-heading"><div><h2>Automation by mailbox</h2><p>Current operating settings</p></div><button className="text-action" onClick={() => setNotice('Agent controls is ready in the Governance navigation.')}>Manage controls →</button></div>
-          <div className="table-scroll"><table><thead><tr><th>Mailbox</th><th>Department</th><th>Headless</th><th>Random QA</th><th>Release</th></tr></thead><tbody>{mailboxRows.map((row) => <tr key={row[0]}>{row.map((cell) => <td key={cell}>{cell}</td>)}</tr>)}</tbody></table></div>
+          <div className="table-scroll"><table><thead><tr><th>Mailbox</th><th>Department</th><th>Headless</th><th>Random QA</th><th>Delivery</th></tr></thead><tbody>{mailboxRows.map((row) => <tr key={row[0]}>{row.map((cell) => <td key={cell}>{cell}</td>)}</tr>)}</tbody></table></div>
         </section>
         <section className="leadership-panel timeline-panel">
           <div className="panel-heading"><div><h2>Recent knowledge changes</h2><p>Governed policy updates</p></div></div>

@@ -53,7 +53,7 @@ Initial departments represented in the mockup should include:
 * Student Accounts
 * Human Resources
 
-The platform monitors incoming departmental email, classifies requests, drafts responses from approved knowledge, stages responses before release, randomly selects a configurable percentage for human QA, processes attached forms, and allows authorized users to control agent autonomy.
+The platform monitors incoming departmental email, classifies requests, drafts responses from approved knowledge, stages responses before simulated outbound email delivery, randomly selects a configurable percentage for human QA, processes attached forms, and allows authorized users to control agent autonomy. This is customer correspondence delivery, not a software release process.
 
 All displayed data must be clearly fictional.
 
@@ -74,7 +74,7 @@ The demonstrated processing pipeline is:
 5. For matched forms, extract fields into the configured canonical schema.
 6. Validate required fields and business rules defined by the matched form version.
 7. Route unmatched, unsupported, ambiguous, or invalid documents for human review.
-8. Use the resulting attachment assessments to influence the email's response, routing, risk, and release status.
+8. Use the resulting attachment assessments to influence the email's response, routing, risk, and delivery status.
 
 Configured forms are reusable classification targets and extraction schemas. They define:
 
@@ -105,11 +105,11 @@ The platform should:
 5. Classify the PDF as the configured Official Transcript Authorization form, version 2026.1.
 6. Show the supporting image as a separate unmatched/supporting document.
 7. Extract the authorization fields and identify that the matched form is missing a signature.
-8. Stage the response for a scheduled release.
+8. Stage the response for scheduled delivery.
 9. Mark the response as selected through random QA sampling.
 10. Allow the reviewer to adjust the response tone using predefined refinement actions.
 11. Allow the reviewer to approve the response.
-12. Move the response into the release queue.
+12. Move the response into the Delivery Queue.
 13. Demonstrate that a policy change can increase QA to 100% and hold affected staged drafts.
 
 The prototype does not need real AI. Every simulated AI action should use predefined static outputs.
@@ -120,7 +120,7 @@ Create a persistent left navigation containing:
 
 * Program Dashboard
 * Work Queue
-* Release Queue
+* Delivery Queue
 * Agent Controls
 * Knowledge
 * Reporting
@@ -188,7 +188,7 @@ Include columns:
 * Status
 * Risk
 * QA status
-* Scheduled release
+* Scheduled delivery
 * Assigned user
 * Received time
 
@@ -214,7 +214,7 @@ Include representative statuses:
 * Specialist Review
 * Approved
 * Staged
-* Released
+* Delivered
 * Held
 
 Clicking a row should open the Response Workbench for that email.
@@ -246,7 +246,7 @@ Display:
 * Response status
 * Tone profile
 * Draft version
-* Scheduled release time
+* Scheduled delivery time
 * QA selection reason
 * Save draft button
 * Approve button
@@ -283,38 +283,38 @@ Add predefined refinement buttons:
 
 Each button should swap the draft with a predefined version. Do not generate text dynamically.
 
-### 4. Release Queue
+### 4. Delivery Queue
 
-Display all staged responses awaiting release.
+Display all staged responses awaiting simulated outbound email delivery. This is not a software release queue.
 
 Include:
 
-* Release batch
+* Delivery batch
 * Institution
 * Department
 * Mailbox
-* Scheduled release time
+* Scheduled delivery time
 * QA percentage
 * Mandatory-review count
 * Randomly selected count
 * Approved count
 * Held count
-* Ready-to-release count
+* Ready-for-delivery count
 
 Allow the user to:
 
-* Open a release batch
+* Open a delivery batch
 * Run simulated random QA selection
 * Hold a batch
 * Resume a batch
-* Release approved responses
-* Change release time
+* Send approved responses
+* Change delivery time
 * Increase QA to 100%
-* Pause automated releases
+* Pause automated delivery
 
 For random QA simulation:
 
-* Begin with an established release-batch population.
+* Begin with an established delivery-batch population.
 * Apply mandatory-review rules first.
 * Select the configured percentage from remaining eligible drafts.
 * Use JavaScript randomization for the demo.
@@ -323,7 +323,7 @@ For random QA simulation:
 
 Add an explanatory tooltip:
 
-> Random QA selection occurs after the release population is locked, preventing the agent or processing order from influencing the sample.
+> Random QA selection occurs after the delivery population is locked, preventing the agent or processing order from influencing the sample.
 
 ### 5. Attachment Review modal
 
@@ -408,10 +408,10 @@ Include controls for:
 * Mandatory human-review percentage
 * Minimum grounding confidence
 * Minimum extraction confidence
-* Scheduled release time
-* Release frequency
-* Business-hours-only release
-* Pause all releases
+* Scheduled delivery time
+* Delivery frequency
+* Business-hours-only delivery
+* Pause all delivery
 * Pause one mailbox
 * Set 100% QA
 * Enable increased-QA mode
@@ -435,7 +435,7 @@ Registrar Mailbox
 Headless automation: 70%
 Random QA sample: 20%
 Mandatory high-risk review: 100%
-Release time: 4:00 PM
+Delivery time: 4:00 PM
 Current mode: Increased QA
 ```
 
@@ -478,9 +478,9 @@ When the user marks the fictional transcript policy as changed:
 
   * Revalidate drafts
   * Increase QA to 100%
-  * Hold release batch
+  * Hold delivery batch
   * Continue with current settings
-* Reflect the selected action in Agent Controls and Release Queue.
+* Reflect the selected action in Agent Controls and Delivery Queue.
 
 ### 8. Reporting
 
@@ -490,7 +490,7 @@ Show:
 
 * Emails processed
 * Staff review rate
-* Headless release rate
+* Headless delivery rate
 * Draft acceptance rate
 * Average staff edit percentage
 * Response-time reduction
@@ -519,7 +519,7 @@ Include configuration sections for:
 * Canonical fields
 * Routing rules
 * Escalation rules
-* Release schedules
+* Delivery schedules
 * QA policies
 * Tone profiles
 * Retention settings
@@ -558,12 +558,12 @@ Create approximately:
 * 20–25 emails
 * 8–12 knowledge articles
 * 4 forms
-* 3 release batches
+* 3 delivery batches
 * 6 users
 
 Include a representative mix of:
 
-* Auto-release eligible emails
+* Auto-deliver eligible emails
 * Random QA selections
 * Mandatory QA
 * Missing knowledge
@@ -572,7 +572,7 @@ Include a representative mix of:
 * Cross-department routing
 * Specialist escalation
 * Knowledge-change holds
-* Scheduled releases
+* Scheduled deliveries
 * High-risk requests
 * Low-confidence classifications
 
@@ -642,22 +642,22 @@ The following controls must work:
 * Approve form extraction
 * Change QA percentage
 * Change automation percentage
-* Pause releases
+* Pause delivery
 * Set 100% QA
 * Run a simulated random QA sample
 * Mark a knowledge article as changed
 * Hold affected drafts
-* Move an approved response to the release queue
-* Simulate releasing a batch
+* Move an approved response to the Delivery Queue
+* Simulate sending a delivery batch
 * Reset the demonstration
 
 Add a Reset Demo button that restores the original JSON-derived state.
 
 ## First-visit welcome
 
-On the first visit only, show an accessible welcome modal after the application shell loads. It must introduce the business problem—high-volume institutional correspondence and document intake need safe, traceable automation with human oversight—and explain that this demonstration shows triage, evidence-grounded drafting, form validation, QA, controlled release, and policy governance.
+On the first visit only, show an accessible welcome modal after the application shell loads. It must introduce the business problem—high-volume institutional correspondence and document intake need safe, traceable automation with human oversight—and explain that this demonstration shows triage, evidence-grounded drafting, form validation, QA, controlled outbound email delivery, and policy governance.
 
-Keep the modal concise and include a recommended walkthrough: **Program Dashboard → Work Queue → Transcript Response Workbench → Attachment Review → Release Queue → Agent Controls → Knowledge**. State clearly that every record, outcome, and action is fictional and simulated locally; no live email, student data, integrations, or AI service is used. Close with a pointer to the persistent **About this screen** control for route-specific help later in the walkthrough.
+Keep the modal concise and include a recommended walkthrough: **Program Dashboard → Work Queue → Transcript Response Workbench → Attachment Review → Delivery Queue → Agent Controls → Knowledge**. State clearly that every record, outcome, and action is fictional and simulated locally; no live email, student data, integrations, or AI service is used. Close with a pointer to the persistent **About this screen** control for route-specific help later in the walkthrough.
 
 The user may dismiss the modal. Persist that dismissal in `localStorage` under a versioned, dedicated key such as `ssi-correspondence-welcome-dismissed-v1`, so it does not reappear on later visits. The welcome dismissal is presentation preference, not demo business state; Reset Demo should not silently re-show the modal.
 
@@ -665,7 +665,7 @@ The user may dismiss the modal. Persist that dismissal in `localStorage` under a
 
 Place a persistent `About this screen` button in the application header immediately beside `Reset Demo`. On every primary screen, it opens a route-specific, keyboard-accessible onboarding modal. The modal is informational only: it must not change local demo state and must include four labeled sections: **What exists**, **Business case**, **Pain solved**, and **Possible additions**.
 
-Provide concise route-specific content for Program Dashboard (network health and leadership oversight), Work Queue (filterable correspondence triage), Response Workbench (reviewable draft and evidence), Release Queue (locked-batch release governance), Agent Controls (scoped automation and QA policy), Knowledge (policy governance and impact), Reporting (measurable program value), and Administration (controlled configuration, including the form-definition catalog). Each modal must explain the relevant operational pain it addresses and one or more plausible future additions without implying a live integration.
+Provide concise route-specific content for Program Dashboard (network health and leadership oversight), Work Queue (filterable correspondence triage), Response Workbench (reviewable draft and evidence), Delivery Queue (locked-batch delivery governance), Agent Controls (scoped automation and QA policy), Knowledge (policy governance and impact), Reporting (measurable program value), and Administration (controlled configuration, including the form-definition catalog). Each modal must explain the relevant operational pain it addresses and one or more plausible future additions without implying a live integration.
 
 The attachment-review modal should likewise explain the document-intake path: incoming artifact → configured form/version classification → canonical extraction → validation. It must state that configured form definitions are the ground truth, that unmatched artifacts may remain supporting material, and may cite visual mapping or exception handling as future additions.
 
@@ -673,7 +673,7 @@ The attachment-review modal should likewise explain the document-intake path: in
 
 Provide a persistent `Start guided demo` entry point that launches a restartable, keyboard-accessible spotlight tour. The tour is a presentation aid only: it must never auto-mutate fixture-derived demo state, approve a draft, alter a policy, or otherwise trigger a workflow action.
 
-The guided sequence moves through Dashboard, Work Queue, the Registrar transcript Response Workbench, attachment intake, Release Queue, Knowledge, and Agent Controls. Each step navigates to its required route or attachment-review context, highlights the relevant visible target, and explains the business value of that screen in concise leadership-facing copy.
+The guided sequence moves through Dashboard, Work Queue, the Registrar transcript Response Workbench, attachment intake, Delivery Queue, Knowledge, and Agent Controls. Each step navigates to its required route or attachment-review context, highlights the relevant visible target, and explains the business value of that screen in concise leadership-facing copy.
 
 Show step progress and provide `Back`, `Next`, and `Exit` controls. `Start guided demo` must restart the sequence from the first step at any time. Tour controls, focus movement, and route changes must be keyboard operable. If a target is unavailable because of a viewport, route, reset, or rendering condition, show a clear fallback message with a `Continue` action rather than blocking the tour or failing silently.
 
@@ -790,7 +790,7 @@ The prototype is complete when:
 8. Agent-control settings update the interface.
 9. Random QA selection can be simulated.
 10. Knowledge changes can place staged drafts on hold.
-11. Approved drafts can move through the release queue.
+11. Approved drafts can move through the Delivery Queue.
 12. Demo state can be reset.
 13. No live APIs, backend, authentication, or AI services are used.
 14. The interface is polished enough to share with executive stakeholders.

@@ -26,7 +26,7 @@ const guidedTourSteps: TourStep[] = [
   },
   {
     path: '/work-queue',
-    selector: '[data-tour="work-queue-primary"] .primary-scenario-row',
+    selector: '[data-tour="work-queue-primary"] .primary-scenario-row .queue-identity',
     eyebrow: 'Prioritized intake',
     title: 'Bring every request into one work queue',
     description: 'The highlighted transcript request combines email context, risk, QA status, assignment, and release timing.',
@@ -113,13 +113,17 @@ export default function GuidedTour({ stepIndex, onStepChange, onClose }: GuidedT
       if (attempts === 0) target.scrollIntoView({ block: 'center', inline: 'nearest' })
       const rect = target.getBoundingClientRect()
       const padding = 8
+      const top = clamp(rect.top - padding, 6, window.innerHeight - 6)
+      const right = clamp(rect.right + padding, 6, window.innerWidth - 6)
+      const bottom = clamp(rect.bottom + padding, 6, window.innerHeight - 6)
+      const left = clamp(rect.left - padding, 6, window.innerWidth - 6)
       setTargetRect({
-        top: Math.max(6, rect.top - padding),
-        right: Math.min(window.innerWidth - 6, rect.right + padding),
-        bottom: Math.min(window.innerHeight - 6, rect.bottom + padding),
-        left: Math.max(6, rect.left - padding),
-        width: Math.min(window.innerWidth - 12, rect.width + padding * 2),
-        height: Math.min(window.innerHeight - 12, rect.height + padding * 2),
+        top,
+        right,
+        bottom,
+        left,
+        width: Math.max(0, right - left),
+        height: Math.max(0, bottom - top),
       })
       setTargetMissing(false)
     }

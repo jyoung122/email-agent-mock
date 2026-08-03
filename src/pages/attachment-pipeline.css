@@ -1,0 +1,105 @@
+.attachment-stack {
+  display: grid;
+  gap: 8px;
+}
+
+.attachment-card.attachment-card--pipeline {
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: start;
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.attachment-card.attachment-card--pipeline:hover {
+  border-color: #9ebce9;
+  background: #f8fbff;
+}
+
+.attachment-card__info {
+  min-width: 0;
+}
+
+.attachment-match {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  line-height: 14px;
+}
+
+.attachment-match svg {
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+
+.attachment-match b {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.attachment-match em {
+  flex: 0 0 auto;
+  border-left: 1px solid var(--border);
+  padding-left: 4px;
+  color: var(--text-muted);
+  font-style: normal;
+}
+
+.attachment-card__states {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+.attachment-card__states small {
+  color: var(--text-muted);
+  font-size: 9.5px;
+}
+
+.attachment-review-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(17, 24, 39, 0.62);
+  backdrop-filter: blur(2px);
+}
+
+.attachment-review-modal {
+  width: min(1500px, 100%);
+  height: min(900px, calc(100vh - 48px));
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-subtle);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.35);
+}
+
+.form-review-page--embedded {
+  max-width: none;
+  min-height: 100%;
+  padding: 18px;
+}
+
+.form-review-page--embedded .ssi-page-header {
+  position: sticky;
+  top: -18px;
+  z-index: 6;
+  margin: -18px -18px 16px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.97);
+}
+
+@media (max-width: 900px) {
+  .attachment-review-backdrop { padding: 0; }
+  .attachment-review-modal { width: 100%; height: 100vh; border: 0; border-radius: 0; }
+}
